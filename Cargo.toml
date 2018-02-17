@@ -1,0 +1,7 @@
+[package]
+name = "fuba"
+version = "0.1.0"
+authors = ["Peter Helbing <peter@abulafia.org>"]
+
+[dependencies]
+rand = "0.4.2"
