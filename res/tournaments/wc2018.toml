@@ -1,221 +1,427 @@
 name = "2018 FIFA World Cup"
 seed = 12345678
 
-[overall]
-1 = "r:fi:1"
-2 = "r:fi:2"
-3 = "r:p3:1"
-4 = "r:p3:2"
+root = "rank"
 
-[team]
-    [team.rus]
-    name = "Russia"
-    elo = 1234
+[[team]]
+id = "rus"
+name = "Russia"
+elo = 1234
 
-    [team.ksa]
-    name = "Saudi Arabia"
-    elo = 1234
+[[team]]
+id = "ksa"
+name = "Saudi Arabia"
+elo = 1234
 
-    [team.egy]
-    name = "Egypt"
-    elo = 1234
+[[team]]
+id = "egy"
+name = "Egypt"
+elo = 1234
 
-    [team.uru]
-    name = "Uruguay"
-    elo = 1234
+[[team]]
+id = "uru"
+name = "Uruguay"
+elo = 1234
 
-    [team.por]
-    name = "Portugal"
-    elo = 1234
+[[team]]
+id = "por"
+name = "Portugal"
+elo = 1234
 
-    [team.esp]
-    name = "Spain"
-    elo = 1234
+[[team]]
+id = "esp"
+name = "Spain"
+elo = 1234
 
-    [team.mar]
-    name = "Morocco"
-    elo = 1234
+[[team]]
+id = "mar"
+name = "Morocco"
+elo = 1234
 
-    [team.iri]
-    name = "Iran"
-    elo = 1234
+[[team]]
+id = "iri"
+name = "Iran"
+elo = 1234
 
-    [team.fra]
-    name = "France"
-    elo = 1234
+[[team]]
+id = "fra"
+name = "France"
+elo = 1234
 
-    [team.aus]
-    name = "Australia"
-    elo = 1234
+[[team]]
+id = "aus"
+name = "Australia"
+elo = 1234
 
-    [team.per]
-    name = "Peru"
-    elo = 1234
+[[team]]
+id = "per"
+name = "Peru"
+elo = 1234
 
-    [team.den]
-    name = "Denmark"
-    elo = 1234
+[[team]]
+id = "den"
+name = "Denmark"
+elo = 1234
 
-    [team.arg]
-    name = "Argentina"
-    elo = 1234
+[[team]]
+id = "arg"
+name = "Argentina"
+elo = 1234
 
-    [team.isl]
-    name = "Iceland"
-    elo = 1234
+[[team]]
+id = "isl"
+name = "Iceland"
+elo = 1234
 
-    [team.cro]
-    name = "Croatia"
-    elo = 1234
+[[team]]
+id = "cro"
+name = "Croatia"
+elo = 1234
 
-    [team.nga]
-    name = "Nigeria"
-    elo = 1234
+[[team]]
+id = "nga"
+name = "Nigeria"
+elo = 1234
 
-    [team.bra]
-    name = "Brazil"
-    elo = 1234
+[[team]]
+id = "bra"
+name = "Brazil"
+elo = 1234
 
-    [team.sui]
-    name = "Switzerland"
-    elo = 1234
+[[team]]
+id = "sui"
+name = "Switzerland"
+elo = 1234
 
-    [team.crc]
-    name = "Costa Rica"
-    elo = 1234
+[[team]]
+id = "crc"
+name = "Costa Rica"
+elo = 1234
 
-    [team.srb]
-    name = "Serbia"
-    elo = 1234
+[[team]]
+id = "srb"
+name = "Serbia"
+elo = 1234
 
-    [team.ger]
-    name = "Germany"
-    elo = 1234
+[[team]]
+id = "ger"
+name = "Germany"
+elo = 1234
 
-    [team.mex]
-    name = "Mexico"
-    elo = 1234
+[[team]]
+id = "mex"
+name = "Mexico"
+elo = 1234
 
-    [team.swe]
-    name = "Sweden"
-    elo = 1234
+[[team]]
+id = "swe"
+name = "Sweden"
+elo = 1234
 
-    [team.kor]
-    name = "South Korea"
-    elo = 1234
+[[team]]
+id = "kor"
+name = "South Korea"
+elo = 1234
 
-    [team.bel]
-    name = "Belgium"
-    elo = 1234
+[[team]]
+id = "bel"
+name = "Belgium"
+elo = 1234
 
-    [team.pan]
-    name = "Panama"
-    elo = 1234
+[[team]]
+id = "pan"
+name = "Panama"
+elo = 1234
 
-    [team.tun]
-    name = "Tunisia"
-    elo = 1234
+[[team]]
+id = "tun"
+name = "Tunisia"
+elo = 1234
 
-    [team.eng]
-    name = "England"
-    elo = 1234
+[[team]]
+id = "eng"
+name = "England"
+elo = 1234
 
-    [team.pol]
-    name = "Poland"
-    elo = 1234
+[[team]]
+id = "pol"
+name = "Poland"
+elo = 1234
 
-    [team.sen]
-    name = "Senegal"
-    elo = 1234
+[[team]]
+id = "sen"
+name = "Senegal"
+elo = 1234
 
-    [team.col]
-    name = "Senegal"
-    elo = 1234
+[[team]]
+id = "col"
+name = "Colombia"
+elo = 1234
 
-    [team.jpn]
-    name = "Japan"
-    elo = 1234
+[[team]]
+id = "jpn"
+name = "Japan"
+elo = 1234
 
-[template]
-    [template.group]
-    format = "group:1:neutral"
-    order = [[1,2], [3,4], [1,3], [4,2], [4,1], [2,3]]
-    scramble = false
-    ranking = ["points", "goaldiff", "goals", "vspoints", "vsgoals", "vsgoalstot"]
+[[format]]
+id = "f_group"
+mode = "roundrobin"
+order = [[1,2], [3,4],
+         [1,3], [4,2],
+         [4,1], [2,3]]
+neutral = true
+rank_by = ["points", "goaldiff", "goals", "vspoints", "vsgoaldiff", "vsgoals"]
 
-    [template.playoff]
-    format = "playoff:1:neutral"
-    scramble = false
-    ranking = ["extra", "penalties"]
+[[format]]
+id = "f_playoff"
+mode = "playoff"
+random = false
+neutral = true
+rank_by = ["extra", "penalties"]
 
-[round]
-    [round.group.a]
-    name = "Group A"
-    teams = ["t:rus", "t:ksa", "t:egy", "t:uru"]
-    template = "group"
+[[format]]
+id = "f_ranking"
+mode = "ranking"
+rank_by = []
 
-    [round.group.b]
-    name = "Group B"
-    teams = ["t:por", "t:esp", "t:mar", "t:iri"]
-    template = "group"
+[[round]]
+id = "group-a"
+name = "Group A"
+format = "f_group"
+[[round.entrant]]
+    id = "rus"
+[[round.entrant]]
+    id = "ksa"
+[[round.entrant]]
+    id = "egy"
+[[round.entrant]]
+    id = "uru"
 
-    [round.group.c]
-    name = "Group C"
-    teams = ["t:fra", "t:aus", "t:per", "t:den"]
-    template = "group"
+[[round]]
+id = "group-b"
+name = "Group B"
+format = "f_group"
+[[round.entrant]]
+    id = "por"
+[[round.entrant]]
+    id = "esp"
+[[round.entrant]]
+    id = "mar"
+[[round.entrant]]
+    id = "iri"
 
-    [round.group.d]
-    name = "Group D"
-    teams = ["t:arg", "t:isl", "t:cro", "t:nig"]
-    template = "group"
+[[round]]
+id = "group-c"
+name = "Group C"
+format = "f_group"
+[[round.entrant]]
+    id = "fra"
+[[round.entrant]]
+    id = "aus"
+[[round.entrant]]
+    id = "per"
+[[round.entrant]]
+    id = "den"
 
-    [round.group.e]
-    name = "Group E"
-    teams = ["t:bra", "t:sui", "t:crc", "t:srb"]
-    template = "group"
+[[round]]
+id = "group-d"
+name = "Group D"
+format = "f_group"
+[[round.entrant]]
+    id = "arg"
+[[round.entrant]]
+    id = "isl"
+[[round.entrant]]
+    id = "cro"
+[[round.entrant]]
+    id = "nga"
 
-    [round.group.f]
-    name = "Group F"
-    teams = ["t:ger", "t:mex", "t:swe", "t:kor"]
-    template = "group"
+[[round]]
+id = "group-e"
+name = "Group E"
+format = "f_group"
+[[round.entrant]]
+    id = "bra"
+[[round.entrant]]
+    id = "sui"
+[[round.entrant]]
+    id = "crc"
+[[round.entrant]]
+    id = "srb"
 
-    [round.group.g]
-    name = "Group G"
-    teams = ["t:bel", "t:pan", "t:tun", "t:eng"]
-    template = "group"
+[[round]]
+id = "group-f"
+name = "Group F"
+format = "f_group"
+[[round.entrant]]
+    id = "ger"
+[[round.entrant]]
+    id = "mex"
+[[round.entrant]]
+    id = "swe"
+[[round.entrant]]
+    id = "kor"
 
-    [round.r16]
-    name = "Round of 16"
-    teams = ["r:group.c:1", "r:group.d:2",
-             "r:group.a:1", "r:group.b:2",
-             "r:group.b:1", "r:group.a:2",
-             "r:group.d:1", "r:group.c:2",
-             "r:group.e:1", "r:group.f:2",
-             "r:group.g:1", "r:group.h:2",
-             "r:group.f:1", "r:group.e:2",
-             "r:group.h:1", "r:group.g:2",]
-    template = "playoff"
+[[round]]
+id = "group-g"
+name = "Group G"
+format = "f_group"
+[[round.entrant]]
+    id = "bel"
+[[round.entrant]]
+    id = "pan"
+[[round.entrant]]
+    id = "tun"
+[[round.entrant]]
+    id = "eng"
 
-    [round.qf]
-    name = "Quarterfinals"
-    teams = ["r:r16:2", "r:r16:1",
-             "r:r16:5", "r:r16:6",
-             "r:r16:7", "r:r16:8",
-             "r:r16:3", "r:r16:4",]
-    template = "playoff"
+[[round]]
+id = "group-h"
+name = "Group H"
+format = "f_group"
+[[round.entrant]]
+    id = "pol"
+[[round.entrant]]
+    id = "sen"
+[[round.entrant]]
+    id = "col"
+[[round.entrant]]
+    id = "jpn"
 
-    [round.sf]
-    name = "Semifinals"
-    teams = ["r:qf:1", "r:qf:2",
-             "r:qf:3", "r:qf:4"]
-    template = "playoff"
+[[round]]
+id = "r16"
+name = "Round of 16"
+format = "f_playoff"
+[[round.entrant]]
+    prev = "group-c"
+    pos = 1
+[[round.entrant]]
+    prev = "group-d"
+    pos = 2
+[[round.entrant]]
+    prev = "group-a"
+    pos = 1
+[[round.entrant]]
+    prev = "group-b"
+    pos = 2
+[[round.entrant]]
+    prev = "group-b"
+    pos = 1
+[[round.entrant]]
+    prev = "group-a"
+    pos = 2
+[[round.entrant]]
+    prev = "group-d"
+    pos = 1
+[[round.entrant]]
+    prev = "group-c"
+    pos = 2
+[[round.entrant]]
+    prev = "group-e"
+    pos = 1
+[[round.entrant]]
+    prev = "group-f"
+    pos = 2
+[[round.entrant]]
+    prev = "group-g"
+    pos = 1
+[[round.entrant]]
+    prev = "group-h"
+    pos = 2
+[[round.entrant]]
+    prev = "group-f"
+    pos = 1
+[[round.entrant]]
+    prev = "group-e"
+    pos = 2
+[[round.entrant]]
+    prev = "group-h"
+    pos = 1
+[[round.entrant]]
+    prev = "group-g"
+    pos = 2
 
-    [round.p3]
-    name = "Third place play-off"
-    teams = ["r:sf:3", "r:sf:4"]
-    template = "playoff"
+[[round]]
+id = "qf"
+name = "Quarterfinals"
+format = "f_playoff"
+[[round.entrant]]
+    prev = "r16"
+    pos = 2
+[[round.entrant]]
+    prev = "r16"
+    pos = 1
+[[round.entrant]]
+    prev = "r16"
+    pos = 5
+[[round.entrant]]
+    prev = "r16"
+    pos = 6
+[[round.entrant]]
+    prev = "r16"
+    pos = 7
+[[round.entrant]]
+    prev = "r16"
+    pos = 8
+[[round.entrant]]
+    prev = "r16"
+    pos = 3
+[[round.entrant]]
+    prev = "r16"
+    pos = 4
 
-    [round.fi]
-    name = "Final"
-    teams = ["r:sf:1", "r:sf:2"]
-    template = "playoff"
+[[round]]
+id = "sf"
+name = "Semifinals"
+format = "f_playoff"
+[[round.entrant]]
+    prev = "qf"
+    pos = 1
+[[round.entrant]]
+    prev = "qf"
+    pos = 2
+[[round.entrant]]
+    prev = "qf"
+    pos = 3
+[[round.entrant]]
+    prev = "r16"
+    pos = 4
+
+[[round]]
+id = "3p"
+name = "Third place play-off"
+format = "f_playoff"
+[[round.entrant]]
+    prev = "sf"
+    pos = 3
+[[round.entrant]]
+    prev = "sf"
+    pos = 4
+
+[[round]]
+id = "fi"
+name = "Final"
+format = "f_playoff"
+[[round.entrant]]
+    prev = "sf"
+    pos = 1
+[[round.entrant]]
+    prev = "sf"
+    pos = 2
+
+[[round]]
+id = "rank"
+name = "Final ranking"
+format = "f_ranking"
+[[round.entrant]]
+    prev = "fi"
+    pos = 1
+[[round.entrant]]
+    prev = "fi"
+    pos = 2
+[[round.entrant]]
+    prev = "3p"
+    pos = 1
+[[round.entrant]]
+    prev = "3p"
+    pos = 2

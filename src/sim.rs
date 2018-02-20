@@ -1,8 +1,8 @@
-extern crate rand;
-
 use std::f64::consts;
 use std::string::String;
-use sim::rand::distributions::{IndependentSample, Range};
+
+use rand;
+use rand::distributions::{IndependentSample, Range};
 
 pub struct MatchOpts {
     pub elo: (i32, i32),
@@ -110,7 +110,7 @@ impl<'a> Sim<'a> {
 
     pub fn simulate(&mut self, opts: MatchOpts) -> MatchResult {
         let d_elo = (opts.elo.0 - opts.elo.1) as f64;
-        let avg_goal = 2.5 + d_elo.abs() / 400.0;
+        let avg_goal = 2.3 + d_elo.abs() / 600.0;
 
         let mut res = MatchResult {
             goals: Goals {
@@ -140,11 +140,12 @@ impl<'a> Sim<'a> {
     }
 
     fn simulate_period(&mut self, d_elo: f64, length: i32, avg_goal: f64) -> (Vec<i32>, Vec<i32>) {
-        let p_team = expected_result(d_elo);
-        let r_team = Range::new(0f64, 1.);
-        let r_minute = Range::new(1, length + 1);
+        let r_addtime = Range::new(1, length / 7);
+        let r_minute = Range::new(1, length + r_addtime.ind_sample(self.rng) + 1);
 
         let mut goals = (vec![], vec![]);
+        let p_team = expected_result(d_elo);
+        let r_team = Range::new(0f64, 1.);
 
         for _ in 1..(self.poisson_gen(avg_goal) + 1) {
             if r_team.ind_sample(self.rng) <= p_team {
