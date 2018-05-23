@@ -8,6 +8,8 @@ use petgraph::Graph;
 use petgraph::algo::toposort;
 use toml;
 
+/// public structs
+
 pub struct Config {
     pub name: String,
     pub seed: Option<u32>,
@@ -15,17 +17,6 @@ pub struct Config {
     pub team: Vec<Rc<RefCell<Team>>>,
     pub format: Vec<Rc<RefCell<Format>>>,
     pub round: Vec<Rc<RefCell<Round>>>,
-}
-
-#[derive(Deserialize)]
-#[serde(rename = "config")]
-pub struct ConfigPars {
-    pub name: String,
-    pub seed: Option<u32>,
-    pub root: String,
-    pub team: Vec<Team>,
-    pub format: Vec<Format>,
-    pub round: Vec<RoundPars>,
 }
 
 #[derive(Deserialize, Clone)]
@@ -45,32 +36,34 @@ pub struct Format {
     pub rank_by: Vec<RankBy>,
 }
 
-#[derive(Deserialize, Clone)]
+#[derive(Deserialize, Clone, PartialEq)]
 pub enum Mode {
-    #[serde(rename = "roundrobin")] RoundRobin,
-    #[serde(rename = "playoff")] Playoff,
-    #[serde(rename = "ranking")] Ranking,
+    #[serde(rename = "roundrobin")]
+    RoundRobin,
+    #[serde(rename = "playoff")]
+    Playoff,
+    #[serde(rename = "ranking")]
+    Ranking,
 }
 
 #[derive(Deserialize, Clone)]
 pub enum RankBy {
-    #[serde(rename = "points")] Points,
-    #[serde(rename = "goaldiff")] GoalDiff,
-    #[serde(rename = "goals")] Goals,
-    #[serde(rename = "vspoints")] VsPoints,
-    #[serde(rename = "vsgoaldiff")] VsGoalDiff,
-    #[serde(rename = "vsgoals")] VsGoals,
-    #[serde(rename = "extra")] Extra,
-    #[serde(rename = "penalties")] Penalties,
-}
-
-#[derive(Deserialize)]
-#[serde(rename = "round")]
-pub struct RoundPars {
-    pub id: String,
-    pub name: String,
-    pub format: String,
-    pub entrant: Vec<EntrantPars>,
+    #[serde(rename = "points")]
+    Points,
+    #[serde(rename = "goaldiff")]
+    GoalDiff,
+    #[serde(rename = "goals")]
+    Goals,
+    #[serde(rename = "vspoints")]
+    VsPoints,
+    #[serde(rename = "vsgoaldiff")]
+    VsGoalDiff,
+    #[serde(rename = "vsgoals")]
+    VsGoals,
+    #[serde(rename = "extra")]
+    Extra,
+    #[serde(rename = "penalties")]
+    Penalties,
 }
 
 pub struct Round {
@@ -80,18 +73,42 @@ pub struct Round {
     pub entrant: Vec<Entrant>,
 }
 
+pub enum Entrant {
+    Team(Rc<RefCell<Team>>),
+    Prev(Rc<RefCell<Round>>, u32),
+}
+
+/// internal structs (for parsing)
+
+#[derive(Deserialize)]
+#[serde(rename = "config")]
+struct ConfigPars {
+    pub name: String,
+    pub seed: Option<u32>,
+    pub root: String,
+    pub team: Vec<Team>,
+    pub format: Vec<Format>,
+    pub round: Vec<RoundPars>,
+}
+
+#[derive(Deserialize)]
+#[serde(rename = "round")]
+struct RoundPars {
+    pub id: String,
+    pub name: String,
+    pub format: String,
+    pub entrant: Vec<EntrantPars>,
+}
+
 #[derive(Deserialize)]
 #[serde(rename = "entrant")]
-pub struct EntrantPars {
+struct EntrantPars {
     pub id: Option<String>,
     pub prev: Option<String>,
     pub pos: Option<u32>,
 }
 
-pub enum Entrant {
-    Team(Rc<RefCell<Team>>),
-    Prev(Rc<RefCell<Round>>, u32),
-}
+/// functions
 
 pub fn read_config(filename: &str) -> Result<Config, &str> {
     let mut f = File::open(filename).expect("file not found");

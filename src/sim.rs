@@ -5,50 +5,50 @@ use rand;
 use rand::distributions::{IndependentSample, Range};
 
 pub struct MatchOpts {
-    pub elo: (i32, i32),
+    pub elo: (u32, u32),
     pub weight: f64,
     pub extra: bool,
     pub penalties: bool,
 }
 
 pub struct Goals {
-    first_half: (Vec<i32>, Vec<i32>),
-    second_half: (Vec<i32>, Vec<i32>),
-    extra_time: Option<(Vec<i32>, Vec<i32>)>,
-    penalties: Option<(Vec<i32>, Vec<i32>)>,
+    first_half: (Vec<u32>, Vec<u32>),
+    second_half: (Vec<u32>, Vec<u32>),
+    extra_time: Option<(Vec<u32>, Vec<u32>)>,
+    penalties: Option<(Vec<u32>, Vec<u32>)>,
 }
 
 impl Goals {
-    pub fn total_after_first(&self) -> (i32, i32) {
+    pub fn total_after_first(&self) -> (u32, u32) {
         (
-            self.first_half.0.len() as i32,
-            self.first_half.1.len() as i32,
+            self.first_half.0.len() as u32,
+            self.first_half.1.len() as u32,
         )
     }
 
-    pub fn total_after_second(&self) -> (i32, i32) {
+    pub fn total_after_second(&self) -> (u32, u32) {
         (
-            self.first_half.0.len() as i32 + self.second_half.0.len() as i32,
-            self.first_half.1.len() as i32 + self.second_half.1.len() as i32,
+            self.first_half.0.len() as u32 + self.second_half.0.len() as u32,
+            self.first_half.1.len() as u32 + self.second_half.1.len() as u32,
         )
     }
 
-    pub fn total_after_extra(&self) -> (i32, i32) {
+    pub fn total_after_extra(&self) -> (u32, u32) {
         let mut total = self.total_after_second();
 
         if let Some(ref x) = self.extra_time {
-            total.0 += x.0.len() as i32;
-            total.1 += x.1.len() as i32;
+            total.0 += x.0.len() as u32;
+            total.1 += x.1.len() as u32;
         }
         total
     }
 
-    pub fn total(&self) -> (i32, i32) {
+    pub fn total(&self) -> (u32, u32) {
         let mut total = self.total_after_extra();
 
         if let Some(ref x) = self.penalties {
-            total.0 += x.0.len() as i32;
-            total.1 += x.1.len() as i32;
+            total.0 += x.0.len() as u32;
+            total.1 += x.1.len() as u32;
         }
         total
     }
@@ -60,7 +60,7 @@ impl Goals {
 
 pub struct MatchResult {
     pub goals: Goals,
-    pub elo: (i32, i32),
+    pub elo: (u32, u32),
 }
 
 impl MatchResult {
@@ -109,7 +109,7 @@ impl<'a> Sim<'a> {
     }
 
     pub fn simulate(&mut self, opts: MatchOpts) -> MatchResult {
-        let d_elo = (opts.elo.0 - opts.elo.1) as f64;
+        let d_elo = (opts.elo.0 as i32 - opts.elo.1 as i32) as f64;
         let avg_goal = 2.3 + d_elo.abs() / 600.0;
 
         let mut res = MatchResult {
@@ -139,7 +139,7 @@ impl<'a> Sim<'a> {
         res
     }
 
-    fn simulate_period(&mut self, d_elo: f64, length: i32, avg_goal: f64) -> (Vec<i32>, Vec<i32>) {
+    fn simulate_period(&mut self, d_elo: f64, length: u32, avg_goal: f64) -> (Vec<u32>, Vec<u32>) {
         let r_addtime = Range::new(1, length / 7);
         let r_minute = Range::new(1, length + r_addtime.ind_sample(self.rng) + 1);
 
@@ -161,7 +161,7 @@ impl<'a> Sim<'a> {
         goals
     }
 
-    fn simulate_penalties(&mut self) -> (Vec<i32>, Vec<i32>) {
+    fn simulate_penalties(&mut self) -> (Vec<u32>, Vec<u32>) {
         let r_goal = Range::new(1, 5);
 
         let mut goals = (vec![], vec![]);
@@ -195,8 +195,8 @@ impl<'a> Sim<'a> {
     }
 }
 
-fn calculate_elo(old_elo: (i32, i32), total: (i32, i32), k: f64) -> (i32, i32) {
-    let g = match (total.0 - total.1).abs() {
+fn calculate_elo(old_elo: (u32, u32), total: (u32, u32), k: f64) -> (u32, u32) {
+    let g = match (total.0 as i32 - total.1 as i32).abs() {
         0...1 => 1.,
         2 => 1.5,
         n => (11. + (n as f64)) / 8.,
@@ -210,11 +210,11 @@ fn calculate_elo(old_elo: (i32, i32), total: (i32, i32), k: f64) -> (i32, i32) {
         0.5
     };
 
-    let d_elo = (old_elo.0 - old_elo.1) as f64;
+    let d_elo = (old_elo.0 as i32 - old_elo.1 as i32) as f64;
 
     (
-        ((old_elo.0 as f64) + k * g * (w - expected_result(d_elo))).round() as i32,
-        ((old_elo.1 as f64) + k * g * (expected_result(d_elo) - w)).round() as i32,
+        ((old_elo.0 as f64) + k * g * (w - expected_result(d_elo))).round() as u32,
+        ((old_elo.1 as f64) + k * g * (expected_result(d_elo) - w)).round() as u32,
     )
 }
 
