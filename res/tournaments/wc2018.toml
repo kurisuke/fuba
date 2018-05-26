@@ -384,7 +384,7 @@ format = "f_playoff"
     prev = "qf"
     pos = 3
 [[round.entrant]]
-    prev = "r16"
+    prev = "qf"
     pos = 4
 
 [[round]]
