@@ -75,7 +75,7 @@ fn gen_pairings(format: &::config::Format, teams: &[Rc<RefCell<Team>>]) -> Vec<P
                 };
                 let matches = vec![
                     Match {
-                        location: location,
+                        location,
                         extra: false,
                         penalties: false,
                         result: None,
@@ -172,9 +172,55 @@ impl RoundResult {
 
                 // Update stats
                 let pt = &pairing.teams;
-                let stat_teams = (self.stats.iter().find(|x| Rc::ptr_eq(&x.team, &pt.0)).unwrap(),
-                                  self.stats.iter().find(|x| Rc::ptr_eq(&x.team, &pt.1)).unwrap());
+                match res.winner() {
+                    ::sim::MatchWinner::WinTeam1 => {
+                        let mut tmp = self.stats.iter_mut().find(|x| Rc::ptr_eq(&x.team, &pt.0));
+                        let mut mod_team = tmp.as_mut().unwrap();
+                        mod_team.points += 3;
+                    }
+                    ::sim::MatchWinner::WinTeam2 => {
+                        let mut tmp = self.stats.iter_mut().find(|x| Rc::ptr_eq(&x.team, &pt.1));
+                        let mut mod_team = tmp.as_mut().unwrap();
+                        mod_team.points += 3;
+                    }
+                    ::sim::MatchWinner::Draw => {
+                        {
+                            let mut tmp =
+                                self.stats.iter_mut().find(|x| Rc::ptr_eq(&x.team, &pt.0));
+                            let mut mod_team = tmp.as_mut().unwrap();
+                            mod_team.points += 1;
+                        }
+                        {
+                            let mut tmp =
+                                self.stats.iter_mut().find(|x| Rc::ptr_eq(&x.team, &pt.1));
+                            let mut mod_team = tmp.as_mut().unwrap();
+                            mod_team.points += 1;
+                        }
+                    }
+                };
+
+                {
+                    let mut tmp = self.stats.iter_mut().find(|x| Rc::ptr_eq(&x.team, &pt.0));
+                    let mut mod_team = tmp.as_mut().unwrap();
+                    mod_team.goals_for += res.goals.total().0;
+                    mod_team.goals_against += res.goals.total().1;
+                }
+                {
+                    let mut tmp = self.stats.iter_mut().find(|x| Rc::ptr_eq(&x.team, &pt.1));
+                    let mut mod_team = tmp.as_mut().unwrap();
+                    mod_team.goals_for += res.goals.total().1;
+                    mod_team.goals_against += res.goals.total().0;
+                }
             }
+        }
+
+        for stat in self.stats.iter() {
+            let mut n = stat.team.borrow().name.clone();
+            n.truncate(32);
+            println!(
+                "{:32} {:2}-{:2} {:2}",
+                n, stat.goals_for, stat.goals_against, stat.points
+            );
         }
     }
 }

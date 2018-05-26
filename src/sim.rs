@@ -63,7 +63,24 @@ pub struct MatchResult {
     pub elo: (u32, u32),
 }
 
+pub enum MatchWinner {
+    WinTeam1,
+    WinTeam2,
+    Draw,
+}
+
 impl MatchResult {
+    pub fn winner(&self) -> MatchWinner {
+        let r = self.goals.total().0 as i32 - self.goals.total().1 as i32;
+        if r > 0 {
+            MatchWinner::WinTeam1
+        } else if r < 0 {
+            MatchWinner::WinTeam2
+        } else {
+            MatchWinner::Draw
+        }
+    }
+
     pub fn result_str(&self) -> String {
         let mut s = String::new();
         s += &format!("{}-{}", self.goals.total().0, self.goals.total().1);
