@@ -15,6 +15,9 @@ struct RoundStats {
     pub points: u32,
     pub goals_for: u32,
     pub goals_against: u32,
+    pub vs_points: HashMap<String, u32>,
+    pub vs_goals_for: HashMap<String, u32>,
+    pub vs_goals_against: HashMap<String, u32>,
 }
 
 struct PairingResult {
@@ -30,6 +33,7 @@ struct Match {
     pub result: Option<MatchResult>,
 }
 
+#[derive(Clone, Copy)]
 enum MatchLocation {
     Home1,
     Home2,
@@ -77,14 +81,15 @@ pub fn calc(config: ::config::Config, sim: &mut ::sim::Sim) {
 fn gen_pairings(format: &::config::Format, teams: &[Rc<RefCell<Team>>]) -> Vec<PairingResult> {
     let mut pairings = vec![];
 
+    let location = match format.neutral {
+        Some(true) => MatchLocation::Neutral,
+        Some(false) => MatchLocation::Home1,
+        None => MatchLocation::Home1,
+    };
+
     if format.mode == ::config::Mode::RoundRobin {
         if let Some(ref o) = format.order {
             for p in o {
-                let location = match format.neutral {
-                    Some(true) => MatchLocation::Neutral,
-                    Some(false) => MatchLocation::Home1,
-                    None => MatchLocation::Home1,
-                };
                 let matches = vec![
                     Match {
                         location,
@@ -105,7 +110,22 @@ fn gen_pairings(format: &::config::Format, teams: &[Rc<RefCell<Team>>]) -> Vec<P
             }
         }
     } else if format.mode == ::config::Mode::Playoff {
-        // not implemented yet
+        for i in 0..teams.len() / 2 {
+            let matches = vec![
+                Match {
+                    location,
+                    extra: true,
+                    penalties: true,
+                    result: None,
+                },
+            ];
+
+            pairings.push(PairingResult {
+                teams: (teams[2 * i].clone(), teams[2 * i + 1].clone()),
+                match_results: matches,
+                winner: None,
+            });
+        }
     } else if format.mode == ::config::Mode::Ranking {
         // no games needed
     }
@@ -122,6 +142,9 @@ fn gen_stats(teams: &[Rc<RefCell<Team>>]) -> Vec<RoundStats> {
             points: 0,
             goals_for: 0,
             goals_against: 0,
+            vs_points: HashMap::new(),
+            vs_goals_for: HashMap::new(),
+            vs_goals_against: HashMap::new(),
         });
     }
 
@@ -182,25 +205,35 @@ impl RoundResult {
     fn update_stats(&mut self) -> () {
         for pairing in self.pairings.iter() {
             let pt = &pairing.teams;
+            let opponent_id = (pt.1.borrow().id.clone(), pt.0.borrow().id.clone());
+
             for m in pairing.match_results.iter() {
                 let res = m.result.as_ref().unwrap();
                 match res.winner() {
                     ::sim::MatchWinner::WinTeam1 => {
                         let mut mod_team = get_stat_line(&mut self.stats, &pt.0);
                         mod_team.points += 3;
+                        let v = mod_team.vs_points.entry(opponent_id.0.clone()).or_insert(0);
+                        *v += 3;
                     }
                     ::sim::MatchWinner::WinTeam2 => {
                         let mut mod_team = get_stat_line(&mut self.stats, &pt.1);
                         mod_team.points += 3;
+                        let v = mod_team.vs_points.entry(opponent_id.1.clone()).or_insert(0);
+                        *v += 3;
                     }
                     ::sim::MatchWinner::Draw => {
                         {
                             let mut mod_team = get_stat_line(&mut self.stats, &pt.0);
                             mod_team.points += 1;
+                            let v = mod_team.vs_points.entry(opponent_id.0.clone()).or_insert(0);
+                            *v += 1;
                         }
                         {
                             let mut mod_team = get_stat_line(&mut self.stats, &pt.1);
                             mod_team.points += 1;
+                            let v = mod_team.vs_points.entry(opponent_id.1.clone()).or_insert(0);
+                            *v += 1;
                         }
                     }
                 };
@@ -209,11 +242,31 @@ impl RoundResult {
                     let mut mod_team = get_stat_line(&mut self.stats, &pt.0);
                     mod_team.goals_for += res.goals.total().0;
                     mod_team.goals_against += res.goals.total().1;
+                    let v = mod_team
+                        .vs_goals_for
+                        .entry(opponent_id.0.clone())
+                        .or_insert(0);
+                    *v += res.goals.total().0;
+                    let v = mod_team
+                        .vs_goals_against
+                        .entry(opponent_id.0.clone())
+                        .or_insert(0);
+                    *v += res.goals.total().1;
                 }
                 {
                     let mut mod_team = get_stat_line(&mut self.stats, &pt.1);
                     mod_team.goals_for += res.goals.total().1;
                     mod_team.goals_against += res.goals.total().0;
+                    let v = mod_team
+                        .vs_goals_for
+                        .entry(opponent_id.1.clone())
+                        .or_insert(0);
+                    *v += res.goals.total().1;
+                    let v = mod_team
+                        .vs_goals_against
+                        .entry(opponent_id.1.clone())
+                        .or_insert(0);
+                    *v += res.goals.total().0;
                 }
             }
         }
@@ -221,23 +274,28 @@ impl RoundResult {
 
     fn sort_stats(&mut self, mode: &::config::Mode, rank_by: &Vec<::config::RankBy>) -> () {
         match mode {
-            ::config::Mode::RoundRobin => {
+            &::config::Mode::RoundRobin => {
                 self.stats.sort_by(|a, b| {
                     let a_key = (
                         &a.points,
                         (a.goals_for as i32 - a.goals_against as i32),
-                        (&a.goals_for),
+                        &a.goals_for,
                     );
                     let b_key = (
                         &b.points,
                         (b.goals_for as i32 - b.goals_against as i32),
-                        (&b.goals_for),
+                        &b.goals_for,
                     );
                     b_key.cmp(&a_key)
                 });
             }
-            ::config::Mode::Playoff => (),
-            ::config::Mode::Ranking => (),
+            &::config::Mode::Playoff => {
+                let (mut winners, mut losers): (Vec<RoundStats>, Vec<RoundStats>) =
+                    self.stats.drain(..).partition(|x| x.points > 0);
+                self.stats.append(&mut winners);
+                self.stats.append(&mut losers);
+            }
+            &::config::Mode::Ranking => (),
         }
     }
 
