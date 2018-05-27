@@ -295,7 +295,7 @@ impl RoundResult {
         }
     }
 
-    fn print(&self, mode : &::config::Mode) -> () {
+    fn print(&self, mode: &::config::Mode) -> () {
         println!("Round: {}", self.name);
         self.print_matches();
         if mode == &::config::Mode::RoundRobin {
