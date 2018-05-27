@@ -57,6 +57,18 @@ pub fn calc(config: ::config::Config, sim: &mut ::sim::Sim) {
         // run round
         result.calc(sim);
 
+        // update stats
+        result.update_stats();
+        result.sort_stats(&format.borrow().mode, &format.borrow().rank_by);
+
+        // print stuff
+        result.print_matches();
+        if format.borrow().mode == ::config::Mode::RoundRobin {
+            result.print_table(true);
+        } else if format.borrow().mode == ::config::Mode::Ranking {
+            result.print_table(false);
+        }
+
         //   move round to rounds_finished
         rounds_finished.insert(round.id.clone(), result);
     }
@@ -159,68 +171,118 @@ impl RoundResult {
                     penalties: m.penalties,
                 }));
 
-                let res = m.result.as_ref().unwrap();
-                let mut n1 = pairing.teams.0.borrow().name.clone();
-                let mut n2 = pairing.teams.1.borrow().name.clone();
-                n1.truncate(32);
-                n2.truncate(32);
-                println!("{:32} - {:32}   {}", n1, n2, res.result_str());
-
                 // Update ELOs
+                let res = m.result.as_ref().unwrap();
                 pairing.teams.0.borrow_mut().elo = res.elo.0;
                 pairing.teams.1.borrow_mut().elo = res.elo.1;
+            }
+        }
+    }
 
-                // Update stats
-                let pt = &pairing.teams;
+    fn update_stats(&mut self) -> () {
+        for pairing in self.pairings.iter() {
+            let pt = &pairing.teams;
+            for m in pairing.match_results.iter() {
+                let res = m.result.as_ref().unwrap();
                 match res.winner() {
                     ::sim::MatchWinner::WinTeam1 => {
-                        let mut tmp = self.stats.iter_mut().find(|x| Rc::ptr_eq(&x.team, &pt.0));
-                        let mut mod_team = tmp.as_mut().unwrap();
+                        let mut mod_team = get_stat_line(&mut self.stats, &pt.0);
                         mod_team.points += 3;
                     }
                     ::sim::MatchWinner::WinTeam2 => {
-                        let mut tmp = self.stats.iter_mut().find(|x| Rc::ptr_eq(&x.team, &pt.1));
-                        let mut mod_team = tmp.as_mut().unwrap();
+                        let mut mod_team = get_stat_line(&mut self.stats, &pt.1);
                         mod_team.points += 3;
                     }
                     ::sim::MatchWinner::Draw => {
                         {
-                            let mut tmp =
-                                self.stats.iter_mut().find(|x| Rc::ptr_eq(&x.team, &pt.0));
-                            let mut mod_team = tmp.as_mut().unwrap();
+                            let mut mod_team = get_stat_line(&mut self.stats, &pt.0);
                             mod_team.points += 1;
                         }
                         {
-                            let mut tmp =
-                                self.stats.iter_mut().find(|x| Rc::ptr_eq(&x.team, &pt.1));
-                            let mut mod_team = tmp.as_mut().unwrap();
+                            let mut mod_team = get_stat_line(&mut self.stats, &pt.1);
                             mod_team.points += 1;
                         }
                     }
                 };
 
                 {
-                    let mut tmp = self.stats.iter_mut().find(|x| Rc::ptr_eq(&x.team, &pt.0));
-                    let mut mod_team = tmp.as_mut().unwrap();
+                    let mut mod_team = get_stat_line(&mut self.stats, &pt.0);
                     mod_team.goals_for += res.goals.total().0;
                     mod_team.goals_against += res.goals.total().1;
                 }
                 {
-                    let mut tmp = self.stats.iter_mut().find(|x| Rc::ptr_eq(&x.team, &pt.1));
-                    let mut mod_team = tmp.as_mut().unwrap();
+                    let mut mod_team = get_stat_line(&mut self.stats, &pt.1);
                     mod_team.goals_for += res.goals.total().1;
                     mod_team.goals_against += res.goals.total().0;
                 }
             }
         }
+    }
 
-        for stat in self.stats.iter() {
-            let mut n = stat.team.borrow().name.clone();
-            n.truncate(32);
-            println!(
-                "{:32} {:2}-{:2} {:2}",
-                n, stat.goals_for, stat.goals_against, stat.points
-            );
+    fn sort_stats(&mut self, mode: &::config::Mode, rank_by: &Vec<::config::RankBy>) -> () {
+        match mode {
+            ::config::Mode::RoundRobin => {
+                self.stats.sort_by(|a, b| {
+                    let a_key = (
+                        &a.points,
+                        (a.goals_for as i32 - a.goals_against as i32),
+                        (&a.goals_for),
+                    );
+                    let b_key = (
+                        &b.points,
+                        (b.goals_for as i32 - b.goals_against as i32),
+                        (&b.goals_for),
+                    );
+                    b_key.cmp(&a_key)
+                });
+            }
+            ::config::Mode::Playoff => (),
+            ::config::Mode::Ranking => (),
         }
     }
+
+    fn print_matches(&self) -> () {
+        for pairing in self.pairings.iter() {
+            let pt = &pairing.teams;
+            for m in pairing.match_results.iter() {
+                let res = m.result.as_ref().unwrap();
+                let mut n1 = pt.0.borrow().name.clone();
+                let mut n2 = pt.1.borrow().name.clone();
+                n1.truncate(32);
+                n2.truncate(32);
+                println!("{:32} - {:32}   {}", n1, n2, res.result_str());
+            }
+        }
+    }
+
+    fn print_table(&self, with_stats: bool) -> () {
+        for (i, stats_line) in self.stats.iter().enumerate() {
+            println!("{:2} {}", i + 1, stats_line.table_line_str(with_stats));
+        }
+    }
+}
+
+impl RoundStats {
+    pub fn table_line_str(&self, with_stats: bool) -> String {
+        let mut n = self.team.borrow().name.clone();
+        n.truncate(32);
+        let mut s = format!("{:32}", n);
+        if with_stats {
+            s += &format!(
+                " {:2}-{:2} {:2}",
+                self.goals_for, self.goals_against, self.points
+            );
+        }
+        s
+    }
+}
+
+fn get_stat_line<'a>(
+    stats: &'a mut Vec<RoundStats>,
+    team: &Rc<RefCell<Team>>,
+) -> &'a mut RoundStats {
+    stats
+        .iter_mut()
+        .find(|x| Rc::ptr_eq(&x.team, team))
+        .unwrap()
 }
