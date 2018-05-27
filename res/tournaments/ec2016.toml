@@ -1,0 +1,426 @@
+name = "2016 UEFA European Championship"
+seed = 12345678
+
+root = "fi"
+
+[[team]]
+id = "fra"
+name = "France"
+elo = 2054
+
+[[team]]
+id = "rou"
+name = "Romania"
+elo = 1764
+
+[[team]]
+id = "alb"
+name = "Albania"
+elo = 1609
+
+[[team]]
+id = "sui"
+name = "Switzerland"
+elo = 1810
+
+[[team]]
+id = "eng"
+name = "England"
+elo = 1960
+
+[[team]]
+id = "rus"
+name = "Russia"
+elo = 1774
+
+[[team]]
+id = "wal"
+name = "Wales"
+elo = 1673
+
+[[team]]
+id = "svk"
+name = "Slovakia"
+elo = 1744
+
+[[team]]
+id = "ger"
+name = "Germany"
+elo = 2069
+
+[[team]]
+id = "ukr"
+name = "Ukraine"
+elo = 1816
+
+[[team]]
+id = "pol"
+name = "Poland"
+elo = 1773
+
+[[team]]
+id = "nir"
+name = "Northern Ireland"
+elo = 1594
+
+[[team]]
+id = "esp"
+name = "Spain"
+elo = 2003
+
+[[team]]
+id = "cze"
+name = "Czech Republic"
+elo = 1766
+
+[[team]]
+id = "tur"
+name = "Turkey"
+elo = 1805
+
+[[team]]
+id = "cro"
+name = "Croatia"
+elo = 1814
+
+[[team]]
+id = "bel"
+name = "Belgium"
+elo = 1929
+
+[[team]]
+id = "ita"
+name = "Italy"
+elo = 1872
+
+[[team]]
+id = "irl"
+name = "Republic of Ireland"
+elo = 1771
+
+[[team]]
+id = "swe"
+name = "Sweden"
+elo = 1768
+
+[[team]]
+id = "por"
+name = "Portugal"
+elo = 1920
+
+[[team]]
+id = "isl"
+name = "Iceland"
+elo = 1673
+
+[[team]]
+id = "aut"
+name = "Austria"
+elo = 1802
+
+[[team]]
+id = "hun"
+name = "Hungary"
+elo = 1699
+
+[[format]]
+id = "f_group"
+mode = "roundrobin"
+order = [[1,2], [3,4],
+         [1,3], [4,2],
+         [4,1], [2,3]]
+neutral = true
+rank_by = ["points", "goaldiff", "goals", "vspoints", "vsgoaldiff", "vsgoals"]
+
+[[format]]
+id = "f_playoff"
+mode = "playoff"
+random = false
+neutral = true
+rank_by = ["extra", "penalties"]
+
+[[format]]
+id = "f_rank3"
+mode = "ranking"
+copy = true
+rank_by = ["points", "goaldiff", "goals"]
+
+[[round]]
+id = "group-a"
+name = "Group A"
+format = "f_group"
+[[round.entrant]]
+    id = "fra"
+[[round.entrant]]
+    id = "rou"
+[[round.entrant]]
+    id = "alb"
+[[round.entrant]]
+    id = "sui"
+
+[[round]]
+id = "group-b"
+name = "Group B"
+format = "f_group"
+[[round.entrant]]
+    id = "eng"
+[[round.entrant]]
+    id = "rus"
+[[round.entrant]]
+    id = "wal"
+[[round.entrant]]
+    id = "svk"
+
+[[round]]
+id = "group-c"
+name = "Group C"
+format = "f_group"
+[[round.entrant]]
+    id = "ger"
+[[round.entrant]]
+    id = "ukr"
+[[round.entrant]]
+    id = "pol"
+[[round.entrant]]
+    id = "nir"
+
+[[round]]
+id = "group-d"
+name = "Group D"
+format = "f_group"
+[[round.entrant]]
+    id = "esp"
+[[round.entrant]]
+    id = "cze"
+[[round.entrant]]
+    id = "tur"
+[[round.entrant]]
+    id = "cro"
+
+[[round]]
+id = "group-e"
+name = "Group E"
+format = "f_group"
+[[round.entrant]]
+    id = "bel"
+[[round.entrant]]
+    id = "ita"
+[[round.entrant]]
+    id = "irl"
+[[round.entrant]]
+    id = "swe"
+
+[[round]]
+id = "group-f"
+name = "Group F"
+format = "f_group"
+[[round.entrant]]
+    id = "por"
+[[round.entrant]]
+    id = "isl"
+[[round.entrant]]
+    id = "aut"
+[[round.entrant]]
+    id = "hun"
+
+[[round]]
+id = "rank3"
+name = "Ranking of 3rd placed teams"
+format = "f_rank3"
+[[round.entrant]]
+    prev = "group-a"
+    pos = 3
+    cond = { type = "rankmin", value = 4, flag = "a" }
+[[round.entrant]]
+    prev = "group-b"
+    pos = 3
+    cond = { type = "rankmin", value = 4, flag = "b" }
+[[round.entrant]]
+    prev = "group-c"
+    pos = 3
+    cond = { type = "rankmin", value = 4, flag = "c" }
+[[round.entrant]]
+    prev = "group-d"
+    pos = 3
+    cond = { type = "rankmin", value = 4, flag = "d" }
+[[round.entrant]]
+    prev = "group-e"
+    pos = 3
+    cond = { type = "rankmin", value = 4, flag = "e" }
+[[round.entrant]]
+    prev = "group-f"
+    pos = 3
+    cond = { type = "rankmin", value = 4, flag = "f" }
+
+[[round]]
+id = "r16"
+name = "Round of 16"
+format = "f_playoff"
+[[round.entrant]]
+    prev = "group-a"
+    pos = 2
+[[round.entrant]]
+    prev = "group-c"
+    pos = 2
+
+[[round.entrant]]
+    prev = "group-b"
+    pos = 1
+[[round.entrant]]
+    prev = "rank3"
+    flag = [[["a", "b", "c", "d"], "d"],
+            [["a", "b", "c", "e"], "a"],
+            [["a", "b", "c", "f"], "a"],
+            [["a", "b", "d", "e"], "a"],
+            [["a", "b", "d", "f"], "a"],
+            [["a", "b", "e", "f"], "a"],
+            [["a", "c", "d", "e"], "d"],
+            [["a", "c", "d", "f"], "d"],
+            [["a", "c", "e", "f"], "a"],
+            [["a", "d", "e", "f"], "a"],
+            [["b", "c", "d", "e"], "d"],
+            [["b", "c", "d", "f"], "d"],
+            [["b", "c", "e", "f"], "c"],
+            [["b", "d", "e", "f"], "d"],
+            [["c", "d", "e", "f"], "d"]]
+
+[[round.entrant]]
+    prev = "group-d"
+    pos = 1
+[[round.entrant]]
+    prev = "rank3"
+    flag = [[["a", "b", "c", "d"], "b"],
+            [["a", "b", "c", "e"], "e"],
+            [["a", "b", "c", "f"], "f"],
+            [["a", "b", "d", "e"], "e"],
+            [["a", "b", "d", "f"], "f"],
+            [["a", "b", "e", "f"], "f"],
+            [["a", "c", "d", "e"], "e"],
+            [["a", "c", "d", "f"], "f"],
+            [["a", "c", "e", "f"], "e"],
+            [["a", "d", "e", "f"], "e"],
+            [["b", "c", "d", "e"], "e"],
+            [["b", "c", "d", "f"], "f"],
+            [["b", "c", "e", "f"], "f"],
+            [["b", "d", "e", "f"], "f"],
+            [["c", "d", "e", "f"], "e"]]
+
+[[round.entrant]]
+    prev = "group-a"
+    pos = 1
+[[round.entrant]]
+    prev = "rank3"
+    flag = [[["a", "b", "c", "d"], "c"],
+            [["a", "b", "c", "e"], "c"],
+            [["a", "b", "c", "f"], "c"],
+            [["a", "b", "d", "e"], "d"],
+            [["a", "b", "d", "f"], "d"],
+            [["a", "b", "e", "f"], "e"],
+            [["a", "c", "d", "e"], "c"],
+            [["a", "c", "d", "f"], "c"],
+            [["a", "c", "e", "f"], "c"],
+            [["a", "d", "e", "f"], "d"],
+            [["b", "c", "d", "e"], "c"],
+            [["b", "c", "d", "f"], "c"],
+            [["b", "c", "e", "f"], "e"],
+            [["b", "d", "e", "f"], "e"],
+            [["c", "d", "e", "f"], "c"]]
+
+[[round.entrant]]
+    prev = "group-c"
+    pos = 1
+[[round.entrant]]
+    prev = "rank3"
+    flag = [[["a", "b", "c", "d"], "a"],
+            [["a", "b", "c", "e"], "b"],
+            [["a", "b", "c", "f"], "b"],
+            [["a", "b", "d", "e"], "b"],
+            [["a", "b", "d", "f"], "b"],
+            [["a", "b", "e", "f"], "b"],
+            [["a", "c", "d", "e"], "a"],
+            [["a", "c", "d", "f"], "a"],
+            [["a", "c", "e", "f"], "f"],
+            [["a", "d", "e", "f"], "f"],
+            [["b", "c", "d", "e"], "b"],
+            [["b", "c", "d", "f"], "b"],
+            [["b", "c", "e", "f"], "b"],
+            [["b", "d", "e", "f"], "b"],
+            [["c", "d", "e", "f"], "f"]]
+
+[[round.entrant]]
+    prev = "group-f"
+    pos = 1
+[[round.entrant]]
+    prev = "group-e"
+    pos = 2
+
+[[round.entrant]]
+    prev = "group-e"
+    pos = 1
+[[round.entrant]]
+    prev = "group-d"
+    pos = 2
+
+[[round.entrant]]
+    prev = "group-b"
+    pos = 2
+[[round.entrant]]
+    prev = "group-f"
+    pos = 2
+
+[[round]]
+id = "qf"
+name = "Quarterfinals"
+format = "f_playoff"
+[[round.entrant]]
+    prev = "r16"
+    pos = 1
+[[round.entrant]]
+    prev = "r16"
+    pos = 3
+[[round.entrant]]
+    prev = "r16"
+    pos = 2
+[[round.entrant]]
+    prev = "r16"
+    pos = 6
+[[round.entrant]]
+    prev = "r16"
+    pos = 5
+[[round.entrant]]
+    prev = "r16"
+    pos = 7
+[[round.entrant]]
+    prev = "r16"
+    pos = 4
+[[round.entrant]]
+    prev = "r16"
+    pos = 8
+
+[[round]]
+id = "sf"
+name = "Semifinals"
+format = "f_playoff"
+[[round.entrant]]
+    prev = "qf"
+    pos = 1
+[[round.entrant]]
+    prev = "qf"
+    pos = 2
+[[round.entrant]]
+    prev = "qf"
+    pos = 3
+[[round.entrant]]
+    prev = "qf"
+    pos = 4
+
+[[round]]
+id = "fi"
+name = "Final"
+format = "f_playoff"
+[[round.entrant]]
+    prev = "sf"
+    pos = 1
+[[round.entrant]]
+    prev = "sf"
+    pos = 2
