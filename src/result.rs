@@ -6,6 +6,7 @@ use std::rc::Rc;
 
 struct RoundResult {
     pub id: String,
+    pub name: String,
     pub pairings: Vec<PairingResult>,
     pub stats: Vec<RoundStats>,
 }
@@ -45,7 +46,6 @@ pub fn calc(config: ::config::Config, sim: &mut ::sim::Sim) {
 
     for r in config.round.iter() {
         let round = r.borrow();
-        println!("Run round: {}", &(*round.name));
 
         //   update entrants (from rounds_finished)
         let teams = resolve_entrants(&(*round.entrant), &rounds_finished);
@@ -54,6 +54,7 @@ pub fn calc(config: ::config::Config, sim: &mut ::sim::Sim) {
         //   generate matches & stats
         let mut result = RoundResult {
             id: round.id.clone(),
+            name: round.name.clone(),
             pairings: gen_pairings(&format.borrow(), &teams),
             stats: gen_stats(&teams),
         };
@@ -66,12 +67,7 @@ pub fn calc(config: ::config::Config, sim: &mut ::sim::Sim) {
         result.sort_stats(&format.borrow().mode, &format.borrow().rank_by);
 
         // print stuff
-        result.print_matches();
-        if format.borrow().mode == ::config::Mode::RoundRobin {
-            result.print_table(true);
-        } else if format.borrow().mode == ::config::Mode::Ranking {
-            result.print_table(false);
-        }
+        result.print(&format.borrow().mode);
 
         //   move round to rounds_finished
         rounds_finished.insert(round.id.clone(), result);
@@ -297,6 +293,19 @@ impl RoundResult {
             }
             &::config::Mode::Ranking => (),
         }
+    }
+
+    fn print(&self, mode : &::config::Mode) -> () {
+        println!("Round: {}", self.name);
+        self.print_matches();
+        if mode == &::config::Mode::RoundRobin {
+            println!();
+            self.print_table(true);
+        } else if mode == &::config::Mode::Ranking {
+            println!();
+            self.print_table(false);
+        }
+        println!();
     }
 
     fn print_matches(&self) -> () {
