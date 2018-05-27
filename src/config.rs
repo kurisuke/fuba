@@ -19,6 +19,76 @@ pub struct Config {
     pub round: Vec<Rc<RefCell<Round>>>,
 }
 
+impl Clone for Config {
+    fn clone(&self) -> Config {
+        let team: Vec<Rc<RefCell<Team>>> = self.team
+            .iter()
+            .map(|x| Rc::new(RefCell::new(x.borrow().clone())))
+            .collect();
+        let format: Vec<Rc<RefCell<Format>>> = self.format
+            .iter()
+            .map(|x| Rc::new(RefCell::new(x.borrow().clone())))
+            .collect();
+
+        let mut round: Vec<Rc<RefCell<Round>>> = vec![];
+
+        for r in self.round.iter() {
+            let rb = r.borrow();
+            let f = format
+                .iter()
+                .find(|x| x.borrow().id == rb.format.borrow().id)
+                .unwrap()
+                .clone();
+
+            let mut entrant = vec![];
+            for e in rb.entrant.iter() {
+                match e {
+                    Entrant::Team(t) => {
+                        entrant.push(Entrant::Team(
+                            team.iter()
+                                .find(|x| x.borrow().id == t.borrow().id)
+                                .unwrap()
+                                .clone(),
+                        ));
+                    }
+                    Entrant::Prev(prev_round, n) => {
+                        entrant.push(Entrant::Prev(
+                            round
+                                .iter()
+                                .find(|x| x.borrow().id == prev_round.borrow().id)
+                                .unwrap()
+                                .clone(),
+                            *n,
+                        ));
+                    }
+                }
+            }
+
+            round.push(Rc::new(RefCell::new(Round {
+                id: rb.id.clone(),
+                name: rb.name.clone(),
+                format: f,
+                entrant,
+            })));
+        }
+
+        let root = round
+            .iter()
+            .find(|x| x.borrow().id == self.root.borrow().id)
+            .unwrap()
+            .clone();
+
+        Config {
+            name: self.name.clone(),
+            seed: self.seed.clone(),
+            team,
+            format,
+            round,
+            root,
+        }
+    }
+}
+
 #[derive(Deserialize, Clone)]
 pub struct Team {
     pub id: String,

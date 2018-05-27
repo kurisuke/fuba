@@ -4,14 +4,15 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 
-struct RoundResult {
+pub struct RoundResult {
     pub id: String,
     pub name: String,
+    pub mode: ::config::Mode,
     pub pairings: Vec<PairingResult>,
     pub stats: Vec<RoundStats>,
 }
 
-struct RoundStats {
+pub struct RoundStats {
     pub team: Rc<RefCell<Team>>,
     pub points: u32,
     pub goals_for: u32,
@@ -21,13 +22,13 @@ struct RoundStats {
     pub vs_goals_against: HashMap<String, u32>,
 }
 
-struct PairingResult {
+pub struct PairingResult {
     pub teams: (Rc<RefCell<Team>>, Rc<RefCell<Team>>),
     pub match_results: Vec<Match>,
     pub winner: Option<bool>,
 }
 
-struct Match {
+pub struct Match {
     pub location: MatchLocation,
     pub extra: bool,
     pub penalties: bool,
@@ -35,13 +36,13 @@ struct Match {
 }
 
 #[derive(Clone, Copy)]
-enum MatchLocation {
+pub enum MatchLocation {
     Home1,
     Home2,
     Neutral,
 }
 
-pub fn calc(config: ::config::Config, sim: &mut ::sim::Sim) {
+pub fn calc(config: ::config::Config, sim: &mut ::sim::Sim) -> Vec<RoundResult> {
     let mut rounds_finished = HashMap::<String, RoundResult>::new();
 
     for r in config.round.iter() {
@@ -55,6 +56,7 @@ pub fn calc(config: ::config::Config, sim: &mut ::sim::Sim) {
         let mut result = RoundResult {
             id: round.id.clone(),
             name: round.name.clone(),
+            mode: format.borrow().mode.clone(),
             pairings: gen_pairings(&format.borrow(), &teams),
             stats: gen_stats(&teams),
         };
@@ -64,14 +66,17 @@ pub fn calc(config: ::config::Config, sim: &mut ::sim::Sim) {
 
         // update stats
         result.update_stats();
-        result.sort_stats(&format.borrow().mode, &format.borrow().rank_by);
-
-        // print stuff
-        result.print(&format.borrow().mode);
+        result.sort_stats(&format.borrow().rank_by);
 
         //   move round to rounds_finished
         rounds_finished.insert(round.id.clone(), result);
     }
+
+    let mut result_vec = vec![];
+    for r in config.round.iter() {
+        result_vec.push(rounds_finished.remove(&r.borrow().id).unwrap());
+    }
+    result_vec
 }
 
 fn gen_pairings(format: &::config::Format, teams: &[Rc<RefCell<Team>>]) -> Vec<PairingResult> {
@@ -268,9 +273,9 @@ impl RoundResult {
         }
     }
 
-    fn sort_stats(&mut self, mode: &::config::Mode, rank_by: &Vec<::config::RankBy>) -> () {
-        match mode {
-            &::config::Mode::RoundRobin => {
+    fn sort_stats(&mut self, rank_by: &Vec<::config::RankBy>) -> () {
+        match self.mode {
+            ::config::Mode::RoundRobin => {
                 self.stats.sort_by(|a, b| {
                     let a_key = (
                         &a.points,
@@ -285,23 +290,23 @@ impl RoundResult {
                     b_key.cmp(&a_key)
                 });
             }
-            &::config::Mode::Playoff => {
+            ::config::Mode::Playoff => {
                 let (mut winners, mut losers): (Vec<RoundStats>, Vec<RoundStats>) =
                     self.stats.drain(..).partition(|x| x.points > 0);
                 self.stats.append(&mut winners);
                 self.stats.append(&mut losers);
             }
-            &::config::Mode::Ranking => (),
+            ::config::Mode::Ranking => (),
         }
     }
 
-    fn print(&self, mode: &::config::Mode) -> () {
+    pub fn print(&self) -> () {
         println!("Round: {}", self.name);
         self.print_matches();
-        if mode == &::config::Mode::RoundRobin {
+        if self.mode == ::config::Mode::RoundRobin {
             println!();
             self.print_table(true);
-        } else if mode == &::config::Mode::Ranking {
+        } else if self.mode == ::config::Mode::Ranking {
             println!();
             self.print_table(false);
         }
