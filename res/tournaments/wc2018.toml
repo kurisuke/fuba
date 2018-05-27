@@ -6,162 +6,162 @@ root = "rank"
 [[team]]
 id = "rus"
 name = "Russia"
-elo = 1234
+elo = 1785
 
 [[team]]
 id = "ksa"
 name = "Saudi Arabia"
-elo = 1234
+elo = 1600
 
 [[team]]
 id = "egy"
 name = "Egypt"
-elo = 1234
+elo = 1643
 
 [[team]]
 id = "uru"
 name = "Uruguay"
-elo = 1234
+elo = 1891
 
 [[team]]
 id = "por"
 name = "Portugal"
-elo = 1234
+elo = 1975
 
 [[team]]
 id = "esp"
 name = "Spain"
-elo = 1234
+elo = 2049
 
 [[team]]
 id = "mar"
 name = "Morocco"
-elo = 1234
+elo = 1711
 
 [[team]]
 id = "iri"
 name = "Iran"
-elo = 1234
+elo = 1796
 
 [[team]]
 id = "fra"
 name = "France"
-elo = 1234
+elo = 1984
 
 [[team]]
 id = "aus"
 name = "Australia"
-elo = 1234
+elo = 1714
 
 [[team]]
 id = "per"
 name = "Peru"
-elo = 1234
+elo = 1906
 
 [[team]]
 id = "den"
 name = "Denmark"
-elo = 1234
+elo = 1843
 
 [[team]]
 id = "arg"
 name = "Argentina"
-elo = 1234
+elo = 1985
 
 [[team]]
 id = "isl"
 name = "Iceland"
-elo = 1234
+elo = 1787
 
 [[team]]
 id = "cro"
 name = "Croatia"
-elo = 1234
+elo = 1853
 
 [[team]]
 id = "nga"
 name = "Nigeria"
-elo = 1234
+elo = 1699
 
 [[team]]
 id = "bra"
 name = "Brazil"
-elo = 1234
+elo = 2131
 
 [[team]]
 id = "sui"
 name = "Switzerland"
-elo = 1234
+elo = 1879
 
 [[team]]
 id = "crc"
 name = "Costa Rica"
-elo = 1234
+elo = 1745
 
 [[team]]
 id = "srb"
 name = "Serbia"
-elo = 1234
+elo = 1770
 
 [[team]]
 id = "ger"
 name = "Germany"
-elo = 1234
+elo = 2092
 
 [[team]]
 id = "mex"
 name = "Mexico"
-elo = 1234
+elo = 1859
 
 [[team]]
 id = "swe"
 name = "Sweden"
-elo = 1234
+elo = 1796
 
 [[team]]
 id = "kor"
 name = "South Korea"
-elo = 1234
+elo = 1745
 
 [[team]]
 id = "bel"
 name = "Belgium"
-elo = 1234
+elo = 1931
 
 [[team]]
 id = "pan"
 name = "Panama"
-elo = 1234
+elo = 1669
 
 [[team]]
 id = "tun"
 name = "Tunisia"
-elo = 1234
+elo = 1649
 
 [[team]]
 id = "eng"
 name = "England"
-elo = 1234
+elo = 1941
 
 [[team]]
 id = "pol"
 name = "Poland"
-elo = 1234
+elo = 1831
 
 [[team]]
 id = "sen"
 name = "Senegal"
-elo = 1234
+elo = 1747
 
 [[team]]
 id = "col"
 name = "Colombia"
-elo = 1234
+elo = 1935
 
 [[team]]
 id = "jpn"
 name = "Japan"
-elo = 1234
+elo = 1692
 
 [[format]]
 id = "f_group"
