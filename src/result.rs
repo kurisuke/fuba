@@ -251,7 +251,11 @@ fn resolve_entrants(
                             }
                         }
                         if found == false {
-                            panic!("No matching entry for flags found! {:?}, number checkers: {}", flags, flag_checks.len());
+                            panic!(
+                                "No matching entry for flags found! {:?}, number checkers: {}",
+                                flags,
+                                flag_checks.len()
+                            );
                         }
                     }
                     None => {
