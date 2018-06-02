@@ -1,5 +1,30 @@
 use std::iter::Peekable;
 
+// BEGIN PUBLIC INTERFACE
+
+pub struct Condition {
+    node : ParseNode,
+}
+
+impl Condition {
+    pub fn new(input: &str) -> Result<Condition, String> {
+        match parse(input) {
+            Ok(node) => Ok(Condition { node }),
+            Err(e) => Err(e)
+        }
+    }
+
+    pub fn check(&self, flags: &Vec<String>) -> Result<bool, String> {
+        self.node.check(flags)
+    }
+
+    pub fn pretty_print(&self) -> String {
+        self.node.pretty_print()
+    }
+}
+
+// END PUBLIC INTERFACE
+
 #[derive(Debug)]
 enum GrammarItem {
     And,
@@ -16,14 +41,14 @@ struct ParseNode {
 }
 
 impl ParseNode {
-    pub fn new(entry: GrammarItem) -> ParseNode {
+    fn new(entry: GrammarItem) -> ParseNode {
         ParseNode {
             children: vec![],
             entry,
         }
     }
 
-    pub fn check(&self, flags: &Vec<String>) -> Result<bool, String> {
+    fn check(&self, flags: &Vec<String>) -> Result<bool, String> {
         match self.entry {
             GrammarItem::Paren => self.children.get(0).unwrap().check(flags),
             GrammarItem::Not => self.children
@@ -67,6 +92,30 @@ impl ParseNode {
                 Some(_) => Ok(true),
                 None => Ok(false),
             },
+        }
+    }
+
+    fn pretty_print(&self) -> String {
+        match self.entry {
+            GrammarItem::Paren => format!(
+                "({})",
+                self.children.get(0).expect("paren needs one child").pretty_print()
+            ),
+            GrammarItem::Not => format!(
+                "!{}",
+                self.children.get(0).expect("NOT needs one child").pretty_print()
+            ),
+            GrammarItem::Or => {
+                let lhs = self.children.get(0).expect("OR needs two children").pretty_print();
+                let rhs = self.children.get(1).expect("OR needs two children").pretty_print();
+                format!("{} & {}", lhs, rhs)
+            }
+            GrammarItem::And => {
+                let lhs = self.children.get(0).expect("AND needs two children").pretty_print();
+                let rhs = self.children.get(1).expect("AND needs two children").pretty_print();
+                format!("{} & {}", lhs, rhs)
+            }
+            GrammarItem::Flag(ref f) => format!("{}", f),
         }
     }
 }
@@ -207,39 +256,4 @@ fn parse_and_operand(tokens: &Vec<LexItem>, pos: usize) -> Result<(ParseNode, us
             c
         )),
     }
-}
-
-fn pretty_print(tree: &ParseNode) -> String {
-    match tree.entry {
-        GrammarItem::Paren => format!(
-            "({})",
-            pretty_print(tree.children.get(0).expect("paren needs one child"))
-        ),
-        GrammarItem::Not => format!(
-            "!{}",
-            pretty_print(tree.children.get(0).expect("NOT needs one child"))
-        ),
-        GrammarItem::Or => {
-            let lhs = pretty_print(tree.children.get(0).expect("OR needs two children"));
-            let rhs = pretty_print(tree.children.get(1).expect("OR needs two children"));
-            format!("{} & {}", lhs, rhs)
-        }
-        GrammarItem::And => {
-            let lhs = pretty_print(tree.children.get(0).expect("AND needs two children"));
-            let rhs = pretty_print(tree.children.get(1).expect("AND needs two children"));
-            format!("{} & {}", lhs, rhs)
-        }
-        GrammarItem::Flag(ref f) => format!("{}", f),
-    }
-}
-
-pub fn print_parse(input: &str) -> String {
-    match parse(input) {
-        Ok(ref p) => pretty_print(p),
-        Err(e) => e,
-    }
-}
-
-pub fn check_condition(input: &str, flags: &Vec<String>) -> Result<bool, String> {
-    parse(input).and_then(|p| p.check(flags))
 }

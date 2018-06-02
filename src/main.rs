@@ -50,8 +50,9 @@ fn main() {
         String::from("e"),
         String::from("f"),
     ];
-    let c = "a&b&(e&f)";
-    println!("Flags: {:?}", v);
-    println!("Condition: {}", condition::print_parse(&c));
-    println!("Check result: {:?}", condition::check_condition(&c, &v));
+    if let Ok(c) = condition::Condition::new("a&b&(e&f)") {
+        println!("Flags: {:?}", v);
+        println!("Condition: {}", c.pretty_print());
+        println!("Check result: {:?}", c.check(&v));
+    }
 }
