@@ -5,6 +5,7 @@ authors = ["Peter Helbing <peter@abulafia.org>"]
 
 [dependencies]
 clap = "2.31"
+num_cpus = "1.0"
 petgraph = "0.4"
 rand = "0.4"
 serde = "1.0"
