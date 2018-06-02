@@ -2,14 +2,14 @@ use std::iter::Peekable;
 
 // BEGIN PUBLIC INTERFACE
 
-pub struct Condition {
+pub struct FlagCheck {
     node : ParseNode,
 }
 
-impl Condition {
-    pub fn new(input: &str) -> Result<Condition, String> {
+impl FlagCheck {
+    pub fn new(input: &str) -> Result<FlagCheck, String> {
         match parse(input) {
-            Ok(node) => Ok(Condition { node }),
+            Ok(node) => Ok(FlagCheck { node }),
             Err(e) => Err(e)
         }
     }

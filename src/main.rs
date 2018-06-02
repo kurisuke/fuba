@@ -6,7 +6,7 @@ extern crate rand;
 extern crate serde_derive;
 extern crate toml;
 
-mod condition;
+mod flagcheck;
 mod config;
 mod multirun;
 mod result;
@@ -50,7 +50,7 @@ fn main() {
         String::from("e"),
         String::from("f"),
     ];
-    if let Ok(c) = condition::Condition::new("a&b&(e&f)") {
+    if let Ok(c) = flagcheck::FlagCheck::new("a&b&(e&f)") {
         println!("Flags: {:?}", v);
         println!("Condition: {}", c.pretty_print());
         println!("Check result: {:?}", c.check(&v));
