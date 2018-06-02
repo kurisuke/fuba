@@ -36,10 +36,16 @@ pub struct Format {
     pub rank_by: Vec<RankBy>,
     #[serde(default = "def_false")]
     pub copy: bool,
+    #[serde(default = "def_weight")]
+    pub weight: f64,
 }
 
 fn def_false() -> bool {
     return false;
+}
+
+fn def_weight() -> f64 {
+    return 60.;
 }
 
 #[derive(Deserialize, Clone, PartialEq)]

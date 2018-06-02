@@ -77,7 +77,7 @@ pub fn calc(config: ::config::Config, sim: &mut ::sim::Sim) -> Vec<RoundResult> 
         };
 
         // run round
-        result.calc(sim);
+        result.calc(sim, format.borrow().weight);
 
         // update stats
         result.update_stats();
@@ -277,12 +277,12 @@ fn resolve_entrants(
 }
 
 impl RoundResult {
-    fn calc(&mut self, sim: &mut ::sim::Sim) -> () {
+    fn calc(&mut self, sim: &mut ::sim::Sim, weight: f64) -> () {
         for pairing in self.pairings.iter_mut() {
             for m in pairing.match_results.iter_mut() {
                 m.result = Some(sim.simulate(::sim::MatchOpts {
                     elo: (pairing.teams.0.borrow().elo, pairing.teams.1.borrow().elo),
-                    weight: 60.,
+                    weight,
                     extra: m.extra,
                     penalties: m.penalties,
                 }));

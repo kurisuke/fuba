@@ -131,6 +131,7 @@ order = [[1,2], [3,4],
          [4,1], [2,3]]
 neutral = true
 rank_by = ["points", "goaldiff", "goals", "vspoints", "vsgoaldiff", "vsgoals"]
+weight = 50
 
 [[format]]
 id = "f_playoff"
@@ -138,6 +139,7 @@ mode = "playoff"
 random = false
 neutral = true
 rank_by = ["extra", "penalties"]
+weight = 50
 
 [[format]]
 id = "f_rank3"
