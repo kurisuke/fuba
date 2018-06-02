@@ -44,7 +44,12 @@ fn main() {
         }
     }
 
-    let v = vec![String::from("a"), String::from("b"), String::from("e"), String::from("f")];
+    let v = vec![
+        String::from("a"),
+        String::from("b"),
+        String::from("e"),
+        String::from("f"),
+    ];
     let c = "a&b&(e&f)";
     println!("Flags: {:?}", v);
     println!("Condition: {}", condition::print_parse(&c));

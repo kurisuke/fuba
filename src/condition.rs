@@ -63,12 +63,10 @@ impl ParseNode {
                     ))
                 }
             }
-            GrammarItem::Flag(ref f) => {
-                match flags.iter().find(|&x| x == f) {
-                    Some(_) => Ok(true),
-                    None => Ok(false)
-                }
-            }
+            GrammarItem::Flag(ref f) => match flags.iter().find(|&x| x == f) {
+                Some(_) => Ok(true),
+                None => Ok(false),
+            },
         }
     }
 }
