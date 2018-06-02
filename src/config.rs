@@ -176,6 +176,21 @@ struct EntrantPars {
     pub id: Option<String>,
     pub prev: Option<String>,
     pub pos: Option<u32>,
+    pub set_flag: Option<SetFlag>,
+    pub if_flag: Option<Vec<String>>,
+}
+
+#[derive(Deserialize)]
+struct SetFlag {
+    pub cond: Cond,
+    pub value: u32,
+    pub flag: String,
+}
+
+#[derive(Deserialize, Clone, PartialEq)]
+pub enum Cond {
+    #[serde(rename = "rankmin")]
+    RankMin,
 }
 
 /// functions
@@ -281,9 +296,9 @@ fn verify<'a>(config: &ConfigPars) -> Result<Vec<String>, &'a str> {
                         prev
                     );
                 }
-                if e.pos.is_none() {
+                if !(e.pos.is_none() ^ e.if_flag.is_none()) {
                     panic!(
-                        "Must set 'pos' when setting 'prev' in entrant for round: {}",
+                        "Must set either 'pos' or 'if_flag' when setting 'prev' in entrant for round: {}",
                         r.id
                     );
                 }

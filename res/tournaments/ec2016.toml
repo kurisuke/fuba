@@ -230,27 +230,27 @@ format = "f_rank3"
 [[round.entrant]]
     prev = "group-a"
     pos = 3
-    cond = { type = "rankmin", value = 4, flag = "a" }
+    set_flag = { cond = "rankmin", value = 4, flag = "a" }
 [[round.entrant]]
     prev = "group-b"
     pos = 3
-    cond = { type = "rankmin", value = 4, flag = "b" }
+    set_flag = { cond = "rankmin", value = 4, flag = "b" }
 [[round.entrant]]
     prev = "group-c"
     pos = 3
-    cond = { type = "rankmin", value = 4, flag = "c" }
+    set_flag = { cond = "rankmin", value = 4, flag = "c" }
 [[round.entrant]]
     prev = "group-d"
     pos = 3
-    cond = { type = "rankmin", value = 4, flag = "d" }
+    set_flag = { cond = "rankmin", value = 4, flag = "d" }
 [[round.entrant]]
     prev = "group-e"
     pos = 3
-    cond = { type = "rankmin", value = 4, flag = "e" }
+    set_flag = { cond = "rankmin", value = 4, flag = "e" }
 [[round.entrant]]
     prev = "group-f"
     pos = 3
-    cond = { type = "rankmin", value = 4, flag = "f" }
+    set_flag = { cond = "rankmin", value = 4, flag = "f" }
 
 [[round]]
 id = "r16"
@@ -268,84 +268,84 @@ format = "f_playoff"
     pos = 1
 [[round.entrant]]
     prev = "rank3"
-    flag = [[["a", "b", "c", "d"], "d"],
-            [["a", "b", "c", "e"], "a"],
-            [["a", "b", "c", "f"], "a"],
-            [["a", "b", "d", "e"], "a"],
-            [["a", "b", "d", "f"], "a"],
-            [["a", "b", "e", "f"], "a"],
-            [["a", "c", "d", "e"], "d"],
-            [["a", "c", "d", "f"], "d"],
-            [["a", "c", "e", "f"], "a"],
-            [["a", "d", "e", "f"], "a"],
-            [["b", "c", "d", "e"], "d"],
-            [["b", "c", "d", "f"], "d"],
-            [["b", "c", "e", "f"], "c"],
-            [["b", "d", "e", "f"], "d"],
-            [["c", "d", "e", "f"], "d"]]
+    if_flag = ["a&b&c&d", "d",
+               "a&b&c&e", "a",
+               "a&b&c&f", "a",
+               "a&b&d&e", "a",
+               "a&b&d&f", "a",
+               "a&b&e&f", "a",
+               "a&c&d&e", "d",
+               "a&c&d&f", "d",
+               "a&c&e&f", "a",
+               "a&d&e&f", "a",
+               "b&c&d&e", "d",
+               "b&c&d&f", "d",
+               "b&c&e&f", "c",
+               "b&d&e&f", "d",
+               "c&d&e&f", "d"]
 
 [[round.entrant]]
     prev = "group-d"
     pos = 1
 [[round.entrant]]
     prev = "rank3"
-    flag = [[["a", "b", "c", "d"], "b"],
-            [["a", "b", "c", "e"], "e"],
-            [["a", "b", "c", "f"], "f"],
-            [["a", "b", "d", "e"], "e"],
-            [["a", "b", "d", "f"], "f"],
-            [["a", "b", "e", "f"], "f"],
-            [["a", "c", "d", "e"], "e"],
-            [["a", "c", "d", "f"], "f"],
-            [["a", "c", "e", "f"], "e"],
-            [["a", "d", "e", "f"], "e"],
-            [["b", "c", "d", "e"], "e"],
-            [["b", "c", "d", "f"], "f"],
-            [["b", "c", "e", "f"], "f"],
-            [["b", "d", "e", "f"], "f"],
-            [["c", "d", "e", "f"], "e"]]
+    if_flag = ["a&b&c&d", "b",
+               "a&b&c&e", "e",
+               "a&b&c&f", "f",
+               "a&b&d&e", "e",
+               "a&b&d&f", "f",
+               "a&b&e&f", "f",
+               "a&c&d&e", "e",
+               "a&c&d&f", "f",
+               "a&c&e&f", "e",
+               "a&d&e&f", "e",
+               "b&c&d&e", "e",
+               "b&c&d&f", "f",
+               "b&c&e&f", "f",
+               "b&d&e&f", "f",
+               "c&d&e&f", "e"]
 
 [[round.entrant]]
     prev = "group-a"
     pos = 1
 [[round.entrant]]
     prev = "rank3"
-    flag = [[["a", "b", "c", "d"], "c"],
-            [["a", "b", "c", "e"], "c"],
-            [["a", "b", "c", "f"], "c"],
-            [["a", "b", "d", "e"], "d"],
-            [["a", "b", "d", "f"], "d"],
-            [["a", "b", "e", "f"], "e"],
-            [["a", "c", "d", "e"], "c"],
-            [["a", "c", "d", "f"], "c"],
-            [["a", "c", "e", "f"], "c"],
-            [["a", "d", "e", "f"], "d"],
-            [["b", "c", "d", "e"], "c"],
-            [["b", "c", "d", "f"], "c"],
-            [["b", "c", "e", "f"], "e"],
-            [["b", "d", "e", "f"], "e"],
-            [["c", "d", "e", "f"], "c"]]
+    if_flag = ["a&b&c&d", "c",
+               "a&b&c&e", "c",
+               "a&b&c&f", "c",
+               "a&b&d&e", "d",
+               "a&b&d&f", "d",
+               "a&b&e&f", "e",
+               "a&c&d&e", "c",
+               "a&c&d&f", "c",
+               "a&c&e&f", "c",
+               "a&d&e&f", "d",
+               "b&c&d&e", "c",
+               "b&c&d&f", "c",
+               "b&c&e&f", "e",
+               "b&d&e&f", "e",
+               "c&d&e&f", "c"]
 
 [[round.entrant]]
     prev = "group-c"
     pos = 1
 [[round.entrant]]
     prev = "rank3"
-    flag = [[["a", "b", "c", "d"], "a"],
-            [["a", "b", "c", "e"], "b"],
-            [["a", "b", "c", "f"], "b"],
-            [["a", "b", "d", "e"], "b"],
-            [["a", "b", "d", "f"], "b"],
-            [["a", "b", "e", "f"], "b"],
-            [["a", "c", "d", "e"], "a"],
-            [["a", "c", "d", "f"], "a"],
-            [["a", "c", "e", "f"], "f"],
-            [["a", "d", "e", "f"], "f"],
-            [["b", "c", "d", "e"], "b"],
-            [["b", "c", "d", "f"], "b"],
-            [["b", "c", "e", "f"], "b"],
-            [["b", "d", "e", "f"], "b"],
-            [["c", "d", "e", "f"], "f"]]
+    if_flag = ["a&b&c&d", "a",
+               "a&b&c&e", "b",
+               "a&b&c&f", "b",
+               "a&b&d&e", "b",
+               "a&b&d&f", "b",
+               "a&b&e&f", "b",
+               "a&c&d&e", "a",
+               "a&c&d&f", "a",
+               "a&c&e&f", "f",
+               "a&d&e&f", "f",
+               "b&c&d&e", "b",
+               "b&c&d&f", "b",
+               "b&c&e&f", "b",
+               "b&d&e&f", "b",
+               "c&d&e&f", "f"]
 
 [[round.entrant]]
     prev = "group-f"
