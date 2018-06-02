@@ -6,72 +6,72 @@ root = "rank"
 [[team]]
 id = "bra"
 name = "Brazil"
-elo = 2232
+elo = 2238
 
 [[team]]
 id = "cro"
 name = "Croatia"
-elo = 1806
+elo = 1819
 
 [[team]]
 id = "mex"
 name = "Mexico"
-elo = 1798
+elo = 1814
 
 [[team]]
 id = "cmr"
 name = "Cameroon"
-elo = 1603
+elo = 1617
 
 [[team]]
 id = "esp"
 name = "Spain"
-elo = 2104
+elo = 2109
 
 [[team]]
 id = "ned"
 name = "Netherlands"
-elo = 2004
+elo = 1986
 
 [[team]]
 id = "chi"
 name = "Chile"
-elo = 1914
+elo = 1920
 
 [[team]]
 id = "aus"
 name = "Australia"
-elo = 1729
+elo = 1709
 
 [[team]]
 id = "col"
 name = "Colombia"
-elo = 1934
+elo = 1922
 
 [[team]]
 id = "gre"
 name = "Greece"
-elo = 1841
+elo = 1824
 
 [[team]]
 id = "civ"
 name = "Ivory Coast"
-elo = 1778
+elo = 1776
 
 [[team]]
 id = "jpn"
 name = "Japan"
-elo = 1765
+elo = 1786
 
 [[team]]
 id = "eng"
 name = "England"
-elo = 1934
+elo = 1932
 
 [[team]]
 id = "ita"
 name = "Italy"
-elo = 1907
+elo = 1888
 
 [[team]]
 id = "uru"
@@ -81,22 +81,22 @@ elo = 1919
 [[team]]
 id = "crc"
 name = "Costa Rica"
-elo = 1735
+elo = 1712
 
 [[team]]
 id = "fra"
 name = "France"
-elo = 1881
+elo = 1897
 
 [[team]]
 id = "hon"
 name = "Honduras"
-elo = 1686
+elo = 1670
 
 [[team]]
 id = "sui"
 name = "Switzerland"
-elo = 1852
+elo = 1856
 
 [[team]]
 id = "ecu"
@@ -106,62 +106,62 @@ elo = 1837
 [[team]]
 id = "arg"
 name = "Argentina"
-elo = 2021
+elo = 2019
 
 [[team]]
 id = "bih"
 name = "Bosnia and Herzegovina"
-elo = 1784
+elo = 1787
 
 [[team]]
 id = "iri"
 name = "Iran"
-elo = 1730
+elo = 1714
 
 [[team]]
 id = "nga"
 name = "Nigeria"
-elo = 1722
+elo = 1724
 
 [[team]]
 id = "ger"
 name = "Germany"
-elo = 2086
+elo = 2073
 
 [[team]]
 id = "por"
 name = "Portugal"
-elo = 1931
+elo = 1943
 
 [[team]]
 id = "gha"
 name = "Ghana"
-elo = 1703
+elo = 1710
 
 [[team]]
 id = "usa"
 name = "United States"
-elo = 1863
+elo = 1858
 
 [[team]]
 id = "bel"
 name = "Belgium"
-elo = 1836
+elo = 1853
 
 [[team]]
 id = "alg"
 name = "Algeria"
-elo = 1586
+elo = 1628
 
 [[team]]
 id = "rus"
 name = "Russia"
-elo = 1845
+elo = 1849
 
 [[team]]
 id = "kor"
 name = "South Korea"
-elo = 1686
+elo = 1668
 
 [[format]]
 id = "f_group"
