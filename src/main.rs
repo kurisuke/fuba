@@ -6,8 +6,8 @@ extern crate rand;
 extern crate serde_derive;
 extern crate toml;
 
-mod flagcheck;
 mod config;
+mod flagcheck;
 mod multirun;
 mod result;
 mod sim;

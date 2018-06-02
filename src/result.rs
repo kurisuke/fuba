@@ -159,8 +159,8 @@ fn resolve_entrants(
     let mut teams = vec![];
 
     for entrant in entrants {
-        match entrant {
-            &::config::Entrant::Prev(ref rc_round, rank) => {
+        match entrant.t {
+            ::config::EntrantType::Prev(ref rc_round, rank) => {
                 let round_id = &(*rc_round.borrow().id);
                 match rounds_finished.get(round_id) {
                     Some(finished_round_result) => {
@@ -175,7 +175,10 @@ fn resolve_entrants(
                     }
                 }
             }
-            &::config::Entrant::Team(ref team_rc) => {
+            ::config::EntrantType::PrevFlag(ref _rc_round, ref _flag_checks) => {
+                // stub
+            }
+            ::config::EntrantType::Team(ref team_rc) => {
                 teams.push(team_rc.clone());
             }
         }

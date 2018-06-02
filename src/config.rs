@@ -19,76 +19,6 @@ pub struct Config {
     pub round: Vec<Rc<RefCell<Round>>>,
 }
 
-impl Clone for Config {
-    fn clone(&self) -> Config {
-        let team: Vec<Rc<RefCell<Team>>> = self.team
-            .iter()
-            .map(|x| Rc::new(RefCell::new(x.borrow().clone())))
-            .collect();
-        let format: Vec<Rc<RefCell<Format>>> = self.format
-            .iter()
-            .map(|x| Rc::new(RefCell::new(x.borrow().clone())))
-            .collect();
-
-        let mut round: Vec<Rc<RefCell<Round>>> = vec![];
-
-        for r in self.round.iter() {
-            let rb = r.borrow();
-            let f = format
-                .iter()
-                .find(|x| x.borrow().id == rb.format.borrow().id)
-                .unwrap()
-                .clone();
-
-            let mut entrant = vec![];
-            for e in rb.entrant.iter() {
-                match e {
-                    Entrant::Team(t) => {
-                        entrant.push(Entrant::Team(
-                            team.iter()
-                                .find(|x| x.borrow().id == t.borrow().id)
-                                .unwrap()
-                                .clone(),
-                        ));
-                    }
-                    Entrant::Prev(prev_round, n) => {
-                        entrant.push(Entrant::Prev(
-                            round
-                                .iter()
-                                .find(|x| x.borrow().id == prev_round.borrow().id)
-                                .unwrap()
-                                .clone(),
-                            *n,
-                        ));
-                    }
-                }
-            }
-
-            round.push(Rc::new(RefCell::new(Round {
-                id: rb.id.clone(),
-                name: rb.name.clone(),
-                format: f,
-                entrant,
-            })));
-        }
-
-        let root = round
-            .iter()
-            .find(|x| x.borrow().id == self.root.borrow().id)
-            .unwrap()
-            .clone();
-
-        Config {
-            name: self.name.clone(),
-            seed: self.seed.clone(),
-            team,
-            format,
-            round,
-            root,
-        }
-    }
-}
-
 #[derive(Deserialize, Clone)]
 pub struct Team {
     pub id: String,
@@ -143,9 +73,107 @@ pub struct Round {
     pub entrant: Vec<Entrant>,
 }
 
-pub enum Entrant {
+pub struct Entrant {
+    pub t: EntrantType,
+    pub set_flag: Option<SetFlag>,
+}
+
+pub enum EntrantType {
     Team(Rc<RefCell<Team>>),
     Prev(Rc<RefCell<Round>>, u32),
+    PrevFlag(Rc<RefCell<Round>>, Vec<(::flagcheck::FlagCheck, String)>),
+}
+
+#[derive(Deserialize, Clone)]
+pub struct SetFlag {
+    pub cond: Cond,
+    pub value: u32,
+    pub flag: String,
+}
+
+#[derive(Deserialize, Clone, PartialEq)]
+pub enum Cond {
+    #[serde(rename = "rankmin")]
+    RankMin,
+}
+
+impl Clone for Config {
+    fn clone(&self) -> Config {
+        let team: Vec<Rc<RefCell<Team>>> = self.team
+            .iter()
+            .map(|x| Rc::new(RefCell::new(x.borrow().clone())))
+            .collect();
+        let format: Vec<Rc<RefCell<Format>>> = self.format
+            .iter()
+            .map(|x| Rc::new(RefCell::new(x.borrow().clone())))
+            .collect();
+
+        let mut round: Vec<Rc<RefCell<Round>>> = vec![];
+
+        for r in self.round.iter() {
+            let rb = r.borrow();
+            let f = format
+                .iter()
+                .find(|x| x.borrow().id == rb.format.borrow().id)
+                .unwrap()
+                .clone();
+
+            let mut entrant = vec![];
+            for e in rb.entrant.iter() {
+                match e.t {
+                    EntrantType::Team(ref t) => {
+                        entrant.push(Entrant {
+                            t: EntrantType::Team(
+                                team.iter()
+                                    .find(|x| x.borrow().id == t.borrow().id)
+                                    .unwrap()
+                                    .clone(),
+                            ),
+                            set_flag: e.set_flag.clone(),
+                        });
+                    }
+                    EntrantType::Prev(ref prev_round, ref n) => {
+                        entrant.push(Entrant {
+                            t: EntrantType::Prev(
+                                round
+                                    .iter()
+                                    .find(|x| x.borrow().id == prev_round.borrow().id)
+                                    .unwrap()
+                                    .clone(),
+                                *n,
+                            ),
+                            set_flag: e.set_flag.clone(),
+                        });
+                    }
+                    EntrantType::PrevFlag(ref _prev_round, ref _checks) => {
+                        // stub
+                    }
+                }
+            }
+
+            round.push(Rc::new(RefCell::new(Round {
+                id: rb.id.clone(),
+                name: rb.name.clone(),
+                format: f,
+                entrant,
+            })));
+        }
+
+        let root = round
+            .iter()
+            .find(|x| x.borrow().id == self.root.borrow().id)
+            .unwrap()
+            .clone();
+
+        Config {
+            name: self.name.clone(),
+            seed: self.seed.clone(),
+            team,
+            format,
+            round,
+            root,
+        }
+    }
 }
 
 /// internal structs (for parsing)
@@ -178,19 +206,6 @@ struct EntrantPars {
     pub pos: Option<u32>,
     pub set_flag: Option<SetFlag>,
     pub if_flag: Option<Vec<String>>,
-}
-
-#[derive(Deserialize)]
-struct SetFlag {
-    pub cond: Cond,
-    pub value: u32,
-    pub flag: String,
-}
-
-#[derive(Deserialize, Clone, PartialEq)]
-pub enum Cond {
-    #[serde(rename = "rankmin")]
-    RankMin,
 }
 
 /// functions
@@ -356,13 +371,34 @@ fn convert_round(
     for e in round_p.entrant.iter() {
         if let Some(ref id) = e.id {
             let team = ex_teams.iter().find(|x| &(*x.borrow().id) == id).unwrap();
-            entrant.push(Entrant::Team(team.clone()));
+            entrant.push(Entrant {
+                t: EntrantType::Team(team.clone()),
+                set_flag: None,
+            });
         } else if let Some(ref prev) = e.prev {
             let round = ex_rounds
                 .iter()
                 .find(|x| &(*x.borrow().id) == prev)
                 .unwrap();
-            entrant.push(Entrant::Prev(round.clone(), e.pos.unwrap()));
+
+            if let Some(pos) = e.pos {
+                entrant.push(Entrant {
+                    t: EntrantType::Prev(round.clone(), pos),
+                    set_flag: None,
+                });
+            } else if let Some(ref if_flag) = e.if_flag {
+                let mut iter = if_flag.iter();
+                let mut checks = vec![];
+                while let Some(check_str) = iter.next() {
+                    let cond = ::flagcheck::FlagCheck::new(check_str).unwrap();
+                    let flag = iter.next().unwrap().clone();
+                    checks.push((cond, flag));
+                }
+                entrant.push(Entrant {
+                    t: EntrantType::PrevFlag(round.clone(), checks),
+                    set_flag: None,
+                })
+            }
         }
     }
 

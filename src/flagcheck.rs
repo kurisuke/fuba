@@ -3,14 +3,14 @@ use std::iter::Peekable;
 // BEGIN PUBLIC INTERFACE
 
 pub struct FlagCheck {
-    node : ParseNode,
+    node: ParseNode,
 }
 
 impl FlagCheck {
     pub fn new(input: &str) -> Result<FlagCheck, String> {
         match parse(input) {
             Ok(node) => Ok(FlagCheck { node }),
-            Err(e) => Err(e)
+            Err(e) => Err(e),
         }
     }
 
@@ -99,20 +99,38 @@ impl ParseNode {
         match self.entry {
             GrammarItem::Paren => format!(
                 "({})",
-                self.children.get(0).expect("paren needs one child").pretty_print()
+                self.children
+                    .get(0)
+                    .expect("paren needs one child")
+                    .pretty_print()
             ),
             GrammarItem::Not => format!(
                 "!{}",
-                self.children.get(0).expect("NOT needs one child").pretty_print()
+                self.children
+                    .get(0)
+                    .expect("NOT needs one child")
+                    .pretty_print()
             ),
             GrammarItem::Or => {
-                let lhs = self.children.get(0).expect("OR needs two children").pretty_print();
-                let rhs = self.children.get(1).expect("OR needs two children").pretty_print();
+                let lhs = self.children
+                    .get(0)
+                    .expect("OR needs two children")
+                    .pretty_print();
+                let rhs = self.children
+                    .get(1)
+                    .expect("OR needs two children")
+                    .pretty_print();
                 format!("{} & {}", lhs, rhs)
             }
             GrammarItem::And => {
-                let lhs = self.children.get(0).expect("AND needs two children").pretty_print();
-                let rhs = self.children.get(1).expect("AND needs two children").pretty_print();
+                let lhs = self.children
+                    .get(0)
+                    .expect("AND needs two children")
+                    .pretty_print();
+                let rhs = self.children
+                    .get(1)
+                    .expect("AND needs two children")
+                    .pretty_print();
                 format!("{} & {}", lhs, rhs)
             }
             GrammarItem::Flag(ref f) => format!("{}", f),
