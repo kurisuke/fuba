@@ -6,6 +6,7 @@ extern crate rand;
 extern crate serde_derive;
 extern crate toml;
 
+mod condition;
 mod config;
 mod multirun;
 mod result;
@@ -42,4 +43,10 @@ fn main() {
             }
         }
     }
+
+    let v = vec![String::from("a"), String::from("b"), String::from("e"), String::from("f")];
+    let c = "a&b&(e&f)";
+    println!("Flags: {:?}", v);
+    println!("Condition: {}", condition::print_parse(&c));
+    println!("Check result: {:?}", condition::check_condition(&c, &v));
 }
