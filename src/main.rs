@@ -43,16 +43,4 @@ fn main() {
             }
         }
     }
-
-    let v = vec![
-        String::from("a"),
-        String::from("b"),
-        String::from("e"),
-        String::from("f"),
-    ];
-    if let Ok(c) = flagcheck::FlagCheck::new("a&b&(e&f)") {
-        println!("Flags: {:?}", v);
-        println!("Condition: {}", c.pretty_print());
-        println!("Check result: {:?}", c.check(&v));
-    }
 }

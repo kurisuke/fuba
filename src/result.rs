@@ -10,10 +10,12 @@ pub struct RoundResult {
     pub mode: ::config::Mode,
     pub pairings: Vec<PairingResult>,
     pub stats: Vec<RoundStats>,
+    pub flags: HashMap<String, Rc<RefCell<Team>>>,
 }
 
 pub struct RoundStats {
     pub team: Rc<RefCell<Team>>,
+    pub set_flag: Option<::config::SetFlag>,
     pub points: u32,
     pub goals_for: u32,
     pub goals_against: u32,
@@ -35,6 +37,11 @@ pub struct Match {
     pub result: Option<MatchResult>,
 }
 
+pub struct TeamWithFlags {
+    pub team: Rc<RefCell<Team>>,
+    pub set_flag: Option<::config::SetFlag>,
+}
+
 #[derive(Clone, Copy)]
 pub enum MatchLocation {
     Home1,
@@ -49,7 +56,7 @@ pub fn calc(config: ::config::Config, sim: &mut ::sim::Sim) -> Vec<RoundResult> 
         let round = r.borrow();
 
         //   update entrants (from rounds_finished)
-        let teams = resolve_entrants(&(*round.entrant), &rounds_finished);
+        let twf = resolve_entrants(&(*round.entrant), &rounds_finished);
         let format = round.format.clone();
 
         //   generate matches & stats
@@ -57,8 +64,9 @@ pub fn calc(config: ::config::Config, sim: &mut ::sim::Sim) -> Vec<RoundResult> 
             id: round.id.clone(),
             name: round.name.clone(),
             mode: format.borrow().mode.clone(),
-            pairings: gen_pairings(&format.borrow(), &teams),
-            stats: gen_stats(&teams),
+            pairings: gen_pairings(&format.borrow(), &twf),
+            stats: gen_stats(&twf),
+            flags: HashMap::<String, Rc<RefCell<Team>>>::new(),
         };
 
         // run round
@@ -67,6 +75,7 @@ pub fn calc(config: ::config::Config, sim: &mut ::sim::Sim) -> Vec<RoundResult> 
         // update stats
         result.update_stats();
         result.sort_stats(&format.borrow().rank_by);
+        result.set_flags();
 
         //   move round to rounds_finished
         rounds_finished.insert(round.id.clone(), result);
@@ -79,7 +88,7 @@ pub fn calc(config: ::config::Config, sim: &mut ::sim::Sim) -> Vec<RoundResult> 
     result_vec
 }
 
-fn gen_pairings(format: &::config::Format, teams: &[Rc<RefCell<Team>>]) -> Vec<PairingResult> {
+fn gen_pairings(format: &::config::Format, twf: &[TeamWithFlags]) -> Vec<PairingResult> {
     let mut pairings = vec![];
 
     let location = match format.neutral {
@@ -102,8 +111,8 @@ fn gen_pairings(format: &::config::Format, teams: &[Rc<RefCell<Team>>]) -> Vec<P
 
                 pairings.push(PairingResult {
                     teams: (
-                        teams[(p[0] - 1) as usize].clone(),
-                        teams[(p[1] - 1) as usize].clone(),
+                        twf[(p[0] - 1) as usize].team.clone(),
+                        twf[(p[1] - 1) as usize].team.clone(),
                     ),
                     match_results: matches,
                     winner: None,
@@ -111,7 +120,7 @@ fn gen_pairings(format: &::config::Format, teams: &[Rc<RefCell<Team>>]) -> Vec<P
             }
         }
     } else if format.mode == ::config::Mode::Playoff {
-        for i in 0..teams.len() / 2 {
+        for i in 0..twf.len() / 2 {
             let matches = vec![
                 Match {
                     location,
@@ -122,7 +131,7 @@ fn gen_pairings(format: &::config::Format, teams: &[Rc<RefCell<Team>>]) -> Vec<P
             ];
 
             pairings.push(PairingResult {
-                teams: (teams[2 * i].clone(), teams[2 * i + 1].clone()),
+                teams: (twf[2 * i].team.clone(), twf[2 * i + 1].team.clone()),
                 match_results: matches,
                 winner: None,
             });
@@ -134,12 +143,13 @@ fn gen_pairings(format: &::config::Format, teams: &[Rc<RefCell<Team>>]) -> Vec<P
     pairings
 }
 
-fn gen_stats(teams: &[Rc<RefCell<Team>>]) -> Vec<RoundStats> {
+fn gen_stats(twf: &[TeamWithFlags]) -> Vec<RoundStats> {
     let mut stats = vec![];
 
-    for team in teams {
+    for t in twf {
         stats.push(RoundStats {
-            team: team.clone(),
+            team: t.team.clone(),
+            set_flag: t.set_flag.clone(),
             points: 0,
             goals_for: 0,
             goals_against: 0,
@@ -155,7 +165,7 @@ fn gen_stats(teams: &[Rc<RefCell<Team>>]) -> Vec<RoundStats> {
 fn resolve_entrants(
     entrants: &[::config::Entrant],
     rounds_finished: &HashMap<String, RoundResult>,
-) -> Vec<Rc<RefCell<Team>>> {
+) -> Vec<TeamWithFlags> {
     let mut teams = vec![];
 
     for entrant in entrants {
@@ -168,18 +178,45 @@ fn resolve_entrants(
                             panic!("Index too large: {}", rank)
                         }
                         let team_rc = &(finished_round_result.stats[(rank - 1) as usize].team);
-                        teams.push(team_rc.clone());
+                        teams.push(TeamWithFlags {
+                            team: team_rc.clone(),
+                            set_flag: entrant.set_flag.clone(),
+                        });
                     }
                     None => {
                         panic!("Round not completed: {}", round_id);
                     }
                 }
             }
-            ::config::EntrantType::PrevFlag(ref _rc_round, ref _flag_checks) => {
-                // stub
+            ::config::EntrantType::PrevFlag(ref rc_round, ref flag_checks) => {
+                let round_id = &(*rc_round.borrow().id);
+                match rounds_finished.get(round_id) {
+                    Some(finished_round_result) => {
+                        let flags = finished_round_result.flags.keys().cloned().collect();
+                        for fc in flag_checks.iter() {
+                            let checker = &fc.0;
+                            let flag_to_get = &fc.1;
+                            if checker.check(&flags) == Ok(true) {
+                                let team_rc = finished_round_result.flags.get(flag_to_get).unwrap();
+                                teams.push(TeamWithFlags {
+                                    team: team_rc.clone(),
+                                    set_flag: entrant.set_flag.clone(),
+                                });
+                                break;
+                            }
+                            panic!("No matching entry for flag found!");
+                        }
+                    }
+                    None => {
+                        panic!("Round not completed: {}", round_id);
+                    }
+                }
             }
             ::config::EntrantType::Team(ref team_rc) => {
-                teams.push(team_rc.clone());
+                teams.push(TeamWithFlags {
+                    team: team_rc.clone(),
+                    set_flag: entrant.set_flag.clone(),
+                });
             }
         }
     }
@@ -276,7 +313,7 @@ impl RoundResult {
         }
     }
 
-    fn sort_stats(&mut self, rank_by: &Vec<::config::RankBy>) -> () {
+    fn sort_stats(&mut self, _rank_by: &Vec<::config::RankBy>) -> () {
         match self.mode {
             ::config::Mode::RoundRobin => {
                 self.stats.sort_by(|a, b| {
@@ -300,6 +337,20 @@ impl RoundResult {
                 self.stats.append(&mut losers);
             }
             ::config::Mode::Ranking => (),
+        }
+    }
+
+    fn set_flags(&mut self) -> () {
+        for (i, s) in self.stats.iter().enumerate() {
+            if let Some(ref c) = s.set_flag {
+                match c.cond {
+                    ::config::Cond::RankMin => {
+                        if i < c.value as usize {
+                            self.flags.insert(c.flag.clone(), s.team.clone());
+                        }
+                    }
+                }
+            }
         }
     }
 

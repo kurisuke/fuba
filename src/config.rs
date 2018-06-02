@@ -373,7 +373,7 @@ fn convert_round(
             let team = ex_teams.iter().find(|x| &(*x.borrow().id) == id).unwrap();
             entrant.push(Entrant {
                 t: EntrantType::Team(team.clone()),
-                set_flag: None,
+                set_flag: e.set_flag.clone(),
             });
         } else if let Some(ref prev) = e.prev {
             let round = ex_rounds
@@ -384,7 +384,7 @@ fn convert_round(
             if let Some(pos) = e.pos {
                 entrant.push(Entrant {
                     t: EntrantType::Prev(round.clone(), pos),
-                    set_flag: None,
+                    set_flag: e.set_flag.clone(),
                 });
             } else if let Some(ref if_flag) = e.if_flag {
                 let mut iter = if_flag.iter();
@@ -396,7 +396,7 @@ fn convert_round(
                 }
                 entrant.push(Entrant {
                     t: EntrantType::PrevFlag(round.clone(), checks),
-                    set_flag: None,
+                    set_flag: e.set_flag.clone(),
                 })
             }
         }
