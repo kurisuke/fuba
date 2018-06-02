@@ -37,9 +37,16 @@ pub struct Match {
     pub result: Option<MatchResult>,
 }
 
-pub struct TeamWithFlags {
+struct TeamWithFlags {
     pub team: Rc<RefCell<Team>>,
     pub set_flag: Option<::config::SetFlag>,
+    pub prev_stats: Option<PrevStats>,
+}
+
+struct PrevStats {
+    points: u32,
+    goals_for: u32,
+    goals_against: u32,
 }
 
 #[derive(Clone, Copy)]
@@ -56,8 +63,8 @@ pub fn calc(config: ::config::Config, sim: &mut ::sim::Sim) -> Vec<RoundResult> 
         let round = r.borrow();
 
         //   update entrants (from rounds_finished)
-        let twf = resolve_entrants(&(*round.entrant), &rounds_finished);
         let format = round.format.clone();
+        let twf = resolve_entrants(&(*round.entrant), &rounds_finished, format.borrow().copy);
 
         //   generate matches & stats
         let mut result = RoundResult {
@@ -147,12 +154,24 @@ fn gen_stats(twf: &[TeamWithFlags]) -> Vec<RoundStats> {
     let mut stats = vec![];
 
     for t in twf {
+        let prev_stats = match t.prev_stats {
+            Some(ref prev_stats) => PrevStats {
+                points: prev_stats.points,
+                goals_for: prev_stats.goals_for,
+                goals_against: prev_stats.goals_against,
+            },
+            None => PrevStats {
+                points: 0,
+                goals_for: 0,
+                goals_against: 0,
+            },
+        };
         stats.push(RoundStats {
             team: t.team.clone(),
             set_flag: t.set_flag.clone(),
-            points: 0,
-            goals_for: 0,
-            goals_against: 0,
+            points: prev_stats.points,
+            goals_for: prev_stats.goals_for,
+            goals_against: prev_stats.goals_against,
             vs_points: HashMap::new(),
             vs_goals_for: HashMap::new(),
             vs_goals_against: HashMap::new(),
@@ -165,6 +184,7 @@ fn gen_stats(twf: &[TeamWithFlags]) -> Vec<RoundStats> {
 fn resolve_entrants(
     entrants: &[::config::Entrant],
     rounds_finished: &HashMap<String, RoundResult>,
+    copy: bool,
 ) -> Vec<TeamWithFlags> {
     let mut teams = vec![];
 
@@ -177,10 +197,19 @@ fn resolve_entrants(
                         if rank as usize > finished_round_result.stats.len() {
                             panic!("Index too large: {}", rank)
                         }
-                        let team_rc = &(finished_round_result.stats[(rank - 1) as usize].team);
+                        let stat_entry = &(finished_round_result.stats[(rank - 1) as usize]);
                         teams.push(TeamWithFlags {
-                            team: team_rc.clone(),
+                            team: stat_entry.team.clone(),
                             set_flag: entrant.set_flag.clone(),
+                            prev_stats: if copy {
+                                Some(PrevStats {
+                                    points: stat_entry.points,
+                                    goals_for: stat_entry.goals_for,
+                                    goals_against: stat_entry.goals_against,
+                                })
+                            } else {
+                                None
+                            },
                         });
                     }
                     None => {
@@ -193,18 +222,36 @@ fn resolve_entrants(
                 match rounds_finished.get(round_id) {
                     Some(finished_round_result) => {
                         let flags = finished_round_result.flags.keys().cloned().collect();
+                        let mut found = false;
                         for fc in flag_checks.iter() {
                             let checker = &fc.0;
                             let flag_to_get = &fc.1;
                             if checker.check(&flags) == Ok(true) {
+                                found = true;
                                 let team_rc = finished_round_result.flags.get(flag_to_get).unwrap();
                                 teams.push(TeamWithFlags {
                                     team: team_rc.clone(),
                                     set_flag: entrant.set_flag.clone(),
+                                    prev_stats: if copy {
+                                        let stat_entry = finished_round_result
+                                            .stats
+                                            .iter()
+                                            .find(|x| x.team.borrow().id == team_rc.borrow().id)
+                                            .unwrap();
+                                        Some(PrevStats {
+                                            points: stat_entry.points,
+                                            goals_for: stat_entry.goals_for,
+                                            goals_against: stat_entry.goals_against,
+                                        })
+                                    } else {
+                                        None
+                                    },
                                 });
                                 break;
                             }
-                            panic!("No matching entry for flag found!");
+                        }
+                        if found == false {
+                            panic!("No matching entry for flags found! {:?}, number checkers: {}", flags, flag_checks.len());
                         }
                     }
                     None => {
@@ -216,6 +263,7 @@ fn resolve_entrants(
                 teams.push(TeamWithFlags {
                     team: team_rc.clone(),
                     set_flag: entrant.set_flag.clone(),
+                    prev_stats: None,
                 });
             }
         }
@@ -337,6 +385,21 @@ impl RoundResult {
                 self.stats.append(&mut losers);
             }
             ::config::Mode::Ranking => (),
+            ::config::Mode::RankingSort => {
+                self.stats.sort_by(|a, b| {
+                    let a_key = (
+                        &a.points,
+                        (a.goals_for as i32 - a.goals_against as i32),
+                        &a.goals_for,
+                    );
+                    let b_key = (
+                        &b.points,
+                        (b.goals_for as i32 - b.goals_against as i32),
+                        &b.goals_for,
+                    );
+                    b_key.cmp(&a_key)
+                });
+            }
         }
     }
 
@@ -357,12 +420,20 @@ impl RoundResult {
     pub fn print(&self) -> () {
         println!("Round: {}", self.name);
         self.print_matches();
-        if self.mode == ::config::Mode::RoundRobin {
-            println!();
-            self.print_table(true);
-        } else if self.mode == ::config::Mode::Ranking {
-            println!();
-            self.print_table(false);
+        match self.mode {
+            ::config::Mode::RoundRobin => {
+                println!();
+                self.print_table(true);
+            }
+            ::config::Mode::Ranking => {
+                println!();
+                self.print_table(false);
+            }
+            ::config::Mode::RankingSort => {
+                println!();
+                self.print_table(true);
+            }
+            ::config::Mode::Playoff => {}
         }
         println!();
     }

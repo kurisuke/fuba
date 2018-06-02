@@ -141,7 +141,7 @@ rank_by = ["extra", "penalties"]
 
 [[format]]
 id = "f_rank3"
-mode = "ranking"
+mode = "ranking_sort"
 copy = true
 rank_by = ["points", "goaldiff", "goals"]
 

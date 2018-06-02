@@ -34,6 +34,12 @@ pub struct Format {
     pub neutral: Option<bool>,
     pub random: Option<bool>,
     pub rank_by: Vec<RankBy>,
+    #[serde(default = "def_false")]
+    pub copy: bool,
+}
+
+fn def_false() -> bool {
+    return false;
 }
 
 #[derive(Deserialize, Clone, PartialEq)]
@@ -44,6 +50,8 @@ pub enum Mode {
     Playoff,
     #[serde(rename = "ranking")]
     Ranking,
+    #[serde(rename = "ranking_sort")]
+    RankingSort,
 }
 
 #[derive(Deserialize, Clone)]
