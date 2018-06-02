@@ -215,20 +215,20 @@ fn pretty_print(tree: &ParseNode) -> String {
     match tree.entry {
         GrammarItem::Paren => format!(
             "({})",
-            pretty_print(tree.children.get(0).expect("parens need one child"))
+            pretty_print(tree.children.get(0).expect("paren needs one child"))
         ),
         GrammarItem::Not => format!(
             "!{}",
-            pretty_print(tree.children.get(0).expect("parens need one child"))
+            pretty_print(tree.children.get(0).expect("NOT needs one child"))
         ),
         GrammarItem::Or => {
-            let lhs = pretty_print(tree.children.get(0).expect("sums need two children"));
-            let rhs = pretty_print(tree.children.get(1).expect("sums need two children"));
+            let lhs = pretty_print(tree.children.get(0).expect("OR needs two children"));
+            let rhs = pretty_print(tree.children.get(1).expect("OR needs two children"));
             format!("{} & {}", lhs, rhs)
         }
         GrammarItem::And => {
-            let lhs = pretty_print(tree.children.get(0).expect("products need two children"));
-            let rhs = pretty_print(tree.children.get(1).expect("products need two children"));
+            let lhs = pretty_print(tree.children.get(0).expect("AND needs two children"));
+            let rhs = pretty_print(tree.children.get(1).expect("AND needs two children"));
             format!("{} & {}", lhs, rhs)
         }
         GrammarItem::Flag(ref f) => format!("{}", f),
