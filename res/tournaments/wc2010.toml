@@ -1,0 +1,427 @@
+name = "2010 FIFA World Cup"
+seed = 12345678
+
+root = "rank"
+
+[[team]]
+id = "rsa"
+name = "South Africa"
+elo = 1694
+
+[[team]]
+id = "mex"
+name = "Mexico"
+elo = 1900
+
+[[team]]
+id = "uru"
+name = "Uruguay"
+elo = 1844
+
+[[team]]
+id = "fra"
+name = "France"
+elo = 1860
+
+[[team]]
+id = "arg"
+name = "Argentina"
+elo = 1920
+
+[[team]]
+id = "nga"
+name = "Nigeria"
+elo = 1716
+
+[[team]]
+id = "kor"
+name = "South Korea"
+elo = 1766
+
+[[team]]
+id = "gre"
+name = "Greece"
+elo = 1737
+
+[[team]]
+id = "eng"
+name = "England"
+elo = 2001
+
+[[team]]
+id = "usa"
+name = "United States"
+elo = 1786
+
+[[team]]
+id = "alg"
+name = "Algeria"
+elo = 1542
+
+[[team]]
+id = "slo"
+name = "Slovenia"
+elo = 1686
+
+[[team]]
+id = "ger"
+name = "Germany"
+elo = 1958
+
+[[team]]
+id = "aus"
+name = "Australia"
+elo = 1777
+
+[[team]]
+id = "srb"
+name = "Serbia"
+elo = 1842
+
+[[team]]
+id = "gha"
+name = "Ghana"
+elo = 1688
+
+[[team]]
+id = "ned"
+name = "Netherlands"
+elo = 2043
+
+[[team]]
+id = "den"
+name = "Denmark"
+elo = 1779
+
+[[team]]
+id = "jpn"
+name = "Japan"
+elo = 1681
+
+[[team]]
+id = "cmr"
+name = "Cameroon"
+elo = 1697
+
+[[team]]
+id = "ita"
+name = "Italy"
+elo = 1937
+
+[[team]]
+id = "par"
+name = "Paraguay"
+elo = 1765
+
+[[team]]
+id = "nzl"
+name = "New Zealand"
+elo = 1531
+
+[[team]]
+id = "svk"
+name = "Slovakia"
+elo = 1671
+
+[[team]]
+id = "bra"
+name = "Brazil"
+elo = 2110
+
+[[team]]
+id = "prk"
+name = "North Korea"
+elo = 1539
+
+[[team]]
+id = "civ"
+name = "Ivory Coast"
+elo = 1740
+
+[[team]]
+id = "por"
+name = "Portugal"
+elo = 1876
+
+[[team]]
+id = "esp"
+name = "Spain"
+elo = 2112
+
+[[team]]
+id = "sui"
+name = "Switzerland"
+elo = 1761
+
+[[team]]
+id = "hon"
+name = "Honduras"
+elo = 1716
+
+[[team]]
+id = "chi"
+name = "Chile"
+elo = 1887
+
+[[format]]
+id = "f_group"
+mode = "roundrobin"
+order = [[1,2], [3,4],
+         [1,3], [4,2],
+         [4,1], [2,3]]
+neutral = true
+rank_by = ["points", "goaldiff", "goals", "vspoints", "vsgoaldiff", "vsgoals"]
+
+[[format]]
+id = "f_playoff"
+mode = "playoff"
+random = false
+neutral = true
+rank_by = ["extra", "penalties"]
+
+[[format]]
+id = "f_ranking"
+mode = "ranking"
+rank_by = []
+
+[[round]]
+id = "group-a"
+name = "Group A"
+format = "f_group"
+[[round.entrant]]
+    id = "rsa"
+[[round.entrant]]
+    id = "mex"
+[[round.entrant]]
+    id = "uru"
+[[round.entrant]]
+    id = "fra"
+
+[[round]]
+id = "group-b"
+name = "Group B"
+format = "f_group"
+[[round.entrant]]
+    id = "arg"
+[[round.entrant]]
+    id = "nga"
+[[round.entrant]]
+    id = "kor"
+[[round.entrant]]
+    id = "gre"
+
+[[round]]
+id = "group-c"
+name = "Group C"
+format = "f_group"
+[[round.entrant]]
+    id = "eng"
+[[round.entrant]]
+    id = "usa"
+[[round.entrant]]
+    id = "alg"
+[[round.entrant]]
+    id = "slo"
+
+[[round]]
+id = "group-d"
+name = "Group D"
+format = "f_group"
+[[round.entrant]]
+    id = "ger"
+[[round.entrant]]
+    id = "aus"
+[[round.entrant]]
+    id = "srb"
+[[round.entrant]]
+    id = "gha"
+
+[[round]]
+id = "group-e"
+name = "Group E"
+format = "f_group"
+[[round.entrant]]
+    id = "ned"
+[[round.entrant]]
+    id = "den"
+[[round.entrant]]
+    id = "jpn"
+[[round.entrant]]
+    id = "cmr"
+
+[[round]]
+id = "group-f"
+name = "Group F"
+format = "f_group"
+[[round.entrant]]
+    id = "ita"
+[[round.entrant]]
+    id = "par"
+[[round.entrant]]
+    id = "nzl"
+[[round.entrant]]
+    id = "slo"
+
+[[round]]
+id = "group-g"
+name = "Group G"
+format = "f_group"
+[[round.entrant]]
+    id = "bra"
+[[round.entrant]]
+    id = "prk"
+[[round.entrant]]
+    id = "civ"
+[[round.entrant]]
+    id = "por"
+
+[[round]]
+id = "group-h"
+name = "Group H"
+format = "f_group"
+[[round.entrant]]
+    id = "esp"
+[[round.entrant]]
+    id = "sui"
+[[round.entrant]]
+    id = "hon"
+[[round.entrant]]
+    id = "chi"
+
+[[round]]
+id = "r16"
+name = "Round of 16"
+format = "f_playoff"
+[[round.entrant]]
+    prev = "group-a"
+    pos = 1
+[[round.entrant]]
+    prev = "group-b"
+    pos = 2
+[[round.entrant]]
+    prev = "group-c"
+    pos = 1
+[[round.entrant]]
+    prev = "group-d"
+    pos = 2
+[[round.entrant]]
+    prev = "group-d"
+    pos = 1
+[[round.entrant]]
+    prev = "group-c"
+    pos = 2
+[[round.entrant]]
+    prev = "group-b"
+    pos = 1
+[[round.entrant]]
+    prev = "group-a"
+    pos = 2
+[[round.entrant]]
+    prev = "group-e"
+    pos = 1
+[[round.entrant]]
+    prev = "group-f"
+    pos = 2
+[[round.entrant]]
+    prev = "group-g"
+    pos = 1
+[[round.entrant]]
+    prev = "group-h"
+    pos = 2
+[[round.entrant]]
+    prev = "group-f"
+    pos = 1
+[[round.entrant]]
+    prev = "group-e"
+    pos = 2
+[[round.entrant]]
+    prev = "group-h"
+    pos = 1
+[[round.entrant]]
+    prev = "group-g"
+    pos = 2
+
+[[round]]
+id = "qf"
+name = "Quarterfinals"
+format = "f_playoff"
+[[round.entrant]]
+    prev = "r16"
+    pos = 5
+[[round.entrant]]
+    prev = "r16"
+    pos = 6
+[[round.entrant]]
+    prev = "r16"
+    pos = 1
+[[round.entrant]]
+    prev = "r16"
+    pos = 2
+[[round.entrant]]
+    prev = "r16"
+    pos = 4
+[[round.entrant]]
+    prev = "r16"
+    pos = 3
+[[round.entrant]]
+    prev = "r16"
+    pos = 7
+[[round.entrant]]
+    prev = "r16"
+    pos = 8
+
+[[round]]
+id = "sf"
+name = "Semifinals"
+format = "f_playoff"
+[[round.entrant]]
+    prev = "qf"
+    pos = 2
+[[round.entrant]]
+    prev = "qf"
+    pos = 1
+[[round.entrant]]
+    prev = "qf"
+    pos = 3
+[[round.entrant]]
+    prev = "qf"
+    pos = 4
+
+[[round]]
+id = "3p"
+name = "Third place play-off"
+format = "f_playoff"
+[[round.entrant]]
+    prev = "sf"
+    pos = 3
+[[round.entrant]]
+    prev = "sf"
+    pos = 4
+
+[[round]]
+id = "fi"
+name = "Final"
+format = "f_playoff"
+[[round.entrant]]
+    prev = "sf"
+    pos = 1
+[[round.entrant]]
+    prev = "sf"
+    pos = 2
+
+[[round]]
+id = "rank"
+name = "Final ranking"
+format = "f_ranking"
+[[round.entrant]]
+    prev = "fi"
+    pos = 1
+[[round.entrant]]
+    prev = "fi"
+    pos = 2
+[[round.entrant]]
+    prev = "3p"
+    pos = 1
+[[round.entrant]]
+    prev = "3p"
+    pos = 2
