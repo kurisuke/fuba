@@ -159,8 +159,18 @@ impl Clone for Config {
                             set_flag: e.set_flag.clone(),
                         });
                     }
-                    EntrantType::PrevFlag(ref _prev_round, ref _checks) => {
-                        // stub
+                    EntrantType::PrevFlag(ref prev_round, ref checks) => {
+                        entrant.push(Entrant {
+                            t: EntrantType::PrevFlag(
+                                round
+                                    .iter()
+                                    .find(|x| x.borrow().id == prev_round.borrow().id)
+                                    .unwrap()
+                                    .clone(),
+                                (*checks).clone(),
+                            ),
+                            set_flag: e.set_flag.clone(),
+                        });
                     }
                 }
             }

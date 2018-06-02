@@ -2,6 +2,7 @@ use std::iter::Peekable;
 
 // BEGIN PUBLIC INTERFACE
 
+#[derive(Clone)]
 pub struct FlagCheck {
     node: ParseNode,
 }
@@ -25,7 +26,7 @@ impl FlagCheck {
 
 // END PUBLIC INTERFACE
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 enum GrammarItem {
     And,
     Or,
@@ -34,7 +35,7 @@ enum GrammarItem {
     Paren,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct ParseNode {
     children: Vec<ParseNode>,
     entry: GrammarItem,
