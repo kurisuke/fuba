@@ -1,0 +1,143 @@
+name = "1. Bundesliga 2018/19"
+seed = 12345678
+
+root = "liga"
+
+[[team]]
+id = "aug"
+name = "FC Augsburg"
+elo = 1614
+
+[[team]]
+id = "ber"
+name = "Hertha BSC"
+elo = 1608
+
+[[team]]
+id = "bre"
+name = "Werder Bremen"
+elo = 1653
+
+[[team]]
+id = "dor"
+name = "Borussia Dortmund"
+elo = 1737
+
+[[team]]
+id = "dus"
+name = "Fortuna Düsseldorf"
+elo = 1471
+
+[[team]]
+id = "fra"
+name = "Eintracht Frankfurt"
+elo = 1627
+
+[[team]]
+id = "fre"
+name = "SC Freiburg"
+elo = 1573
+
+[[team]]
+id = "han"
+name = "Hannover 96"
+elo = 1575
+
+[[team]]
+id = "hof"
+name = "1899 Hoffenheim"
+elo = 1710
+
+[[team]]
+id = "lei"
+name = "RB Leipzig"
+elo = 1685
+
+[[team]]
+id = "lev"
+name = "Bayer Leverkusen"
+elo = 1704
+
+[[team]]
+id = "mai"
+name = "Mainz 05"
+elo = 1595
+
+[[team]]
+id = "mgl"
+name = "Borussia Mönchengladbach"
+elo = 1659
+
+[[team]]
+id = "mun"
+name = "Bayern München"
+elo = 1943
+
+[[team]]
+id = "nur"
+name = "1. FC Nürnberg"
+elo = 1499
+
+[[team]]
+id = "sch"
+name = "Schalke 04"
+elo = 1735
+
+[[team]]
+id = "stu"
+name = "VfB Stuttgart"
+elo = 1658
+
+[[team]]
+id = "wol"
+name = "VfL Wolfsburg"
+elo = 1599
+
+[[format]]
+id = "f_group"
+mode = "roundrobin"
+legs = 2
+random = true
+rank_by = ["points", "goaldiff", "goals", "vspoints", "vsgoaldiff", "vsgoals"]
+weight = 20
+
+[[round]]
+id = "liga"
+name = "Liga"
+format = "f_group"
+[[round.entrant]]
+    id = "aug"
+[[round.entrant]]
+    id = "ber"
+[[round.entrant]]
+    id = "bre"
+[[round.entrant]]
+    id = "dor"
+[[round.entrant]]
+    id = "dus"
+[[round.entrant]]
+    id = "fra"
+[[round.entrant]]
+    id = "fre"
+[[round.entrant]]
+    id = "han"
+[[round.entrant]]
+    id = "hof"
+[[round.entrant]]
+    id = "lei"
+[[round.entrant]]
+    id = "lev"
+[[round.entrant]]
+    id = "mai"
+[[round.entrant]]
+    id = "mgl"
+[[round.entrant]]
+    id = "mun"
+[[round.entrant]]
+    id = "nur"
+[[round.entrant]]
+    id = "sch"
+[[round.entrant]]
+    id = "stu"
+[[round.entrant]]
+    id = "wol"
