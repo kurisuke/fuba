@@ -1,11 +1,7 @@
 use rand;
 use rand::Rng;
 
-pub fn generate_round_robin(
-    num_teams: u32,
-    num_legs: u32,
-    rng: Option<&mut rand::ThreadRng>,
-) -> Vec<Vec<u32>> {
+pub fn generate_round_robin(num_teams: u32, num_legs: u32, randomize: bool) -> Vec<Vec<u32>> {
     let dummy_team = if num_teams % 2 != 0 { num_teams + 1 } else { 0 };
 
     let num_teams_in_calc = if dummy_team != 0 {
@@ -58,7 +54,8 @@ pub fn generate_round_robin(
         }
     }
 
-    if let Some(rng) = rng {
+    if randomize {
+        let mut rng = rand::thread_rng();
         let real_games_per_round = if dummy_team > 0 {
             games_per_round - 1
         } else {

@@ -31,8 +31,12 @@ pub struct Format {
     pub id: String,
     pub mode: Mode,
     pub order: Option<Vec<Vec<u32>>>,
-    pub neutral: Option<bool>,
-    pub random: Option<bool>,
+    #[serde(default = "def_legs")]
+    pub legs: u32,
+    #[serde(default = "def_false")]
+    pub neutral: bool,
+    #[serde(default = "def_false")]
+    pub random: bool,
     pub rank_by: Vec<RankBy>,
     #[serde(default = "def_false")]
     pub copy: bool,
@@ -42,6 +46,10 @@ pub struct Format {
 
 fn def_false() -> bool {
     return false;
+}
+
+fn def_legs() -> u32 {
+    return 1;
 }
 
 fn def_weight() -> f64 {

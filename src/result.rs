@@ -99,15 +99,16 @@ fn gen_pairings(format: &::config::Format, twf: &[TeamWithFlags]) -> Vec<Pairing
     let mut pairings = vec![];
 
     let location = match format.neutral {
-        Some(true) => MatchLocation::Neutral,
-        Some(false) => MatchLocation::Home1,
-        None => MatchLocation::Home1,
+        true => MatchLocation::Neutral,
+        false => MatchLocation::Home1,
     };
 
     if format.mode == ::config::Mode::RoundRobin {
         let o = match format.order {
             Some(ref o) => o.clone(),
-            None => ::gen_pairing::generate_round_robin(twf.len() as u32, 1, None),
+            None => {
+                ::gen_pairing::generate_round_robin(twf.len() as u32, format.legs, format.random)
+            }
         };
 
         for p in o {
