@@ -1,0 +1,211 @@
+name = "2012 UEFA European Championship"
+seed = 12345678
+
+root = "fi"
+
+[[team]]
+id = "pol"
+name = "Poland"
+elo = 1822
+
+[[team]]
+id = "gre"
+name = "Greece"
+elo = 1780
+
+[[team]]
+id = "rus"
+name = "Russia"
+elo = 1850
+
+[[team]]
+id = "cze"
+name = "Czech Republic"
+elo = 1788
+
+[[team]]
+id = "ned"
+name = "Netherlands"
+elo = 2061
+
+[[team]]
+id = "den"
+name = "Denmark"
+elo = 1817
+
+[[team]]
+id = "ger"
+name = "Germany"
+elo = 2043
+
+[[team]]
+id = "por"
+name = "Portugal"
+elo = 1865
+
+[[team]]
+id = "esp"
+name = "Spain"
+elo = 2127
+
+[[team]]
+id = "ita"
+name = "Italy"
+elo = 1851
+
+[[team]]
+id = "irl"
+name = "Republic of Ireland"
+elo = 1805
+
+[[team]]
+id = "cro"
+name = "Croatia"
+elo = 1873
+
+[[team]]
+id = "ukr"
+name = "Ukraine"
+elo = 1856
+
+[[team]]
+id = "swe"
+name = "Sweden"
+elo = 1891
+
+[[team]]
+id = "fra"
+name = "France"
+elo = 1867
+
+[[team]]
+id = "eng"
+name = "England"
+elo = 1955
+
+[[format]]
+id = "f_group"
+mode = "roundrobin"
+order = [[1,2], [3,4],
+         [1,3], [4,2],
+         [4,1], [2,3]]
+neutral = true
+rank_by = ["points", "goaldiff", "goals", "vspoints", "vsgoaldiff", "vsgoals"]
+weight = 50
+
+[[format]]
+id = "f_playoff"
+mode = "playoff"
+random = false
+neutral = true
+rank_by = ["extra", "penalties"]
+weight = 50
+
+[[round]]
+id = "group-a"
+name = "Group A"
+format = "f_group"
+[[round.entrant]]
+    id = "pol"
+[[round.entrant]]
+    id = "gre"
+[[round.entrant]]
+    id = "rus"
+[[round.entrant]]
+    id = "cze"
+
+[[round]]
+id = "group-b"
+name = "Group B"
+format = "f_group"
+[[round.entrant]]
+    id = "ned"
+[[round.entrant]]
+    id = "den"
+[[round.entrant]]
+    id = "ger"
+[[round.entrant]]
+    id = "por"
+
+[[round]]
+id = "group-c"
+name = "Group C"
+format = "f_group"
+[[round.entrant]]
+    id = "esp"
+[[round.entrant]]
+    id = "ita"
+[[round.entrant]]
+    id = "irl"
+[[round.entrant]]
+    id = "cro"
+
+[[round]]
+id = "group-d"
+name = "Group D"
+format = "f_group"
+[[round.entrant]]
+    id = "ukr"
+[[round.entrant]]
+    id = "swe"
+[[round.entrant]]
+    id = "fra"
+[[round.entrant]]
+    id = "eng"
+
+[[round]]
+id = "qf"
+name = "Quarterfinals"
+format = "f_playoff"
+[[round.entrant]]
+    prev = "group-a"
+    pos = 1
+[[round.entrant]]
+    prev = "group-b"
+    pos = 2
+[[round.entrant]]
+    prev = "group-b"
+    pos = 1
+[[round.entrant]]
+    prev = "group-a"
+    pos = 2
+[[round.entrant]]
+    prev = "group-c"
+    pos = 1
+[[round.entrant]]
+    prev = "group-d"
+    pos = 2
+[[round.entrant]]
+    prev = "group-d"
+    pos = 1
+[[round.entrant]]
+    prev = "group-c"
+    pos = 2
+
+[[round]]
+id = "sf"
+name = "Semifinals"
+format = "f_playoff"
+[[round.entrant]]
+    prev = "qf"
+    pos = 1
+[[round.entrant]]
+    prev = "qf"
+    pos = 3
+[[round.entrant]]
+    prev = "qf"
+    pos = 2
+[[round.entrant]]
+    prev = "qf"
+    pos = 4
+
+[[round]]
+id = "fi"
+name = "Final"
+format = "f_playoff"
+[[round.entrant]]
+    prev = "sf"
+    pos = 1
+[[round.entrant]]
+    prev = "sf"
+    pos = 2

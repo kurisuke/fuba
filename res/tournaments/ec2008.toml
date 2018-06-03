@@ -1,0 +1,211 @@
+name = "2008 UEFA European Championship"
+seed = 12345678
+
+root = "fi"
+
+[[team]]
+id = "sui"
+name = "Switzerland"
+elo = 1893
+
+[[team]]
+id = "cze"
+name = "Czech Republic"
+elo = 1921
+
+[[team]]
+id = "por"
+name = "Portugal"
+elo = 1860
+
+[[team]]
+id = "tur"
+name = "Turkey"
+elo = 1813
+
+[[team]]
+id = "aut"
+name = "Austria"
+elo = 1701
+
+[[team]]
+id = "cro"
+name = "Croatia"
+elo = 1871
+
+[[team]]
+id = "ger"
+name = "Germany"
+elo = 1960
+
+[[team]]
+id = "pol"
+name = "Poland"
+elo = 1786
+
+[[team]]
+id = "ned"
+name = "Netherlands"
+elo = 1972
+
+[[team]]
+id = "ita"
+name = "Italy"
+elo = 2033
+
+[[team]]
+id = "rou"
+name = "Romania"
+elo = 1907
+
+[[team]]
+id = "fra"
+name = "France"
+elo = 2007
+
+[[team]]
+id = "gre"
+name = "Greece"
+elo = 1836
+
+[[team]]
+id = "swe"
+name = "Sweden"
+elo = 1783
+
+[[team]]
+id = "esp"
+name = "Spain"
+elo = 1987
+
+[[team]]
+id = "rus"
+name = "Russia"
+elo = 1799
+
+[[format]]
+id = "f_group"
+mode = "roundrobin"
+order = [[1,2], [3,4],
+         [1,3], [4,2],
+         [4,1], [2,3]]
+neutral = true
+rank_by = ["points", "goaldiff", "goals", "vspoints", "vsgoaldiff", "vsgoals"]
+weight = 50
+
+[[format]]
+id = "f_playoff"
+mode = "playoff"
+random = false
+neutral = true
+rank_by = ["extra", "penalties"]
+weight = 50
+
+[[round]]
+id = "group-a"
+name = "Group A"
+format = "f_group"
+[[round.entrant]]
+    id = "sui"
+[[round.entrant]]
+    id = "cze"
+[[round.entrant]]
+    id = "por"
+[[round.entrant]]
+    id = "tur"
+
+[[round]]
+id = "group-b"
+name = "Group B"
+format = "f_group"
+[[round.entrant]]
+    id = "aut"
+[[round.entrant]]
+    id = "cro"
+[[round.entrant]]
+    id = "ger"
+[[round.entrant]]
+    id = "pol"
+
+[[round]]
+id = "group-c"
+name = "Group C"
+format = "f_group"
+[[round.entrant]]
+    id = "ned"
+[[round.entrant]]
+    id = "ita"
+[[round.entrant]]
+    id = "rou"
+[[round.entrant]]
+    id = "fra"
+
+[[round]]
+id = "group-d"
+name = "Group D"
+format = "f_group"
+[[round.entrant]]
+    id = "gre"
+[[round.entrant]]
+    id = "swe"
+[[round.entrant]]
+    id = "esp"
+[[round.entrant]]
+    id = "rus"
+
+[[round]]
+id = "qf"
+name = "Quarterfinals"
+format = "f_playoff"
+[[round.entrant]]
+    prev = "group-a"
+    pos = 1
+[[round.entrant]]
+    prev = "group-b"
+    pos = 2
+[[round.entrant]]
+    prev = "group-b"
+    pos = 1
+[[round.entrant]]
+    prev = "group-a"
+    pos = 2
+[[round.entrant]]
+    prev = "group-c"
+    pos = 1
+[[round.entrant]]
+    prev = "group-d"
+    pos = 2
+[[round.entrant]]
+    prev = "group-d"
+    pos = 1
+[[round.entrant]]
+    prev = "group-c"
+    pos = 2
+
+[[round]]
+id = "sf"
+name = "Semifinals"
+format = "f_playoff"
+[[round.entrant]]
+    prev = "qf"
+    pos = 1
+[[round.entrant]]
+    prev = "qf"
+    pos = 2
+[[round.entrant]]
+    prev = "qf"
+    pos = 3
+[[round.entrant]]
+    prev = "qf"
+    pos = 4
+
+[[round]]
+id = "fi"
+name = "Final"
+format = "f_playoff"
+[[round.entrant]]
+    prev = "sf"
+    pos = 1
+[[round.entrant]]
+    prev = "sf"
+    pos = 2

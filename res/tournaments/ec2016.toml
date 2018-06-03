@@ -6,122 +6,122 @@ root = "fi"
 [[team]]
 id = "fra"
 name = "France"
-elo = 2054
+elo = 2075
 
 [[team]]
 id = "rou"
 name = "Romania"
-elo = 1764
+elo = 1760
 
 [[team]]
 id = "alb"
 name = "Albania"
-elo = 1609
+elo = 1617
 
 [[team]]
 id = "sui"
 name = "Switzerland"
-elo = 1810
+elo = 1772
 
 [[team]]
 id = "eng"
 name = "England"
-elo = 1960
+elo = 1972
 
 [[team]]
 id = "rus"
 name = "Russia"
-elo = 1774
+elo = 1760
 
 [[team]]
 id = "wal"
 name = "Wales"
-elo = 1673
+elo = 1655
 
 [[team]]
 id = "svk"
 name = "Slovakia"
-elo = 1744
+elo = 1766
 
 [[team]]
 id = "ger"
 name = "Germany"
-elo = 2069
+elo = 2035
 
 [[team]]
 id = "ukr"
 name = "Ukraine"
-elo = 1816
+elo = 1836
 
 [[team]]
 id = "pol"
 name = "Poland"
-elo = 1773
+elo = 1766
 
 [[team]]
 id = "nir"
 name = "Northern Ireland"
-elo = 1594
+elo = 1624
 
 [[team]]
 id = "esp"
 name = "Spain"
-elo = 2003
+elo = 1993
 
 [[team]]
 id = "cze"
 name = "Czech Republic"
-elo = 1766
+elo = 1755
 
 [[team]]
 id = "tur"
 name = "Turkey"
-elo = 1805
+elo = 1829
 
 [[team]]
 id = "cro"
 name = "Croatia"
-elo = 1814
+elo = 1818
 
 [[team]]
 id = "bel"
 name = "Belgium"
-elo = 1929
+elo = 1923
 
 [[team]]
 id = "ita"
 name = "Italy"
-elo = 1872
+elo = 1876
 
 [[team]]
 id = "irl"
 name = "Republic of Ireland"
-elo = 1771
+elo = 1759
 
 [[team]]
 id = "swe"
 name = "Sweden"
-elo = 1768
+elo = 1765
 
 [[team]]
 id = "por"
 name = "Portugal"
-elo = 1920
+elo = 1910
 
 [[team]]
 id = "isl"
 name = "Iceland"
-elo = 1673
+elo = 1666
 
 [[team]]
 id = "aut"
 name = "Austria"
-elo = 1802
+elo = 1778
 
 [[team]]
 id = "hun"
 name = "Hungary"
-elo = 1699
+elo = 1696
 
 [[format]]
 id = "f_group"
