@@ -4,8 +4,8 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::rc::Rc;
 
-use petgraph::Graph;
 use petgraph::algo::toposort;
+use petgraph::Graph;
 use toml;
 
 /// public structs

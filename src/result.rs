@@ -105,37 +105,36 @@ fn gen_pairings(format: &::config::Format, twf: &[TeamWithFlags]) -> Vec<Pairing
     };
 
     if format.mode == ::config::Mode::RoundRobin {
-        if let Some(ref o) = format.order {
-            for p in o {
-                let matches = vec![
-                    Match {
-                        location,
-                        extra: false,
-                        penalties: false,
-                        result: None,
-                    },
-                ];
+        let o = match format.order {
+            Some(ref o) => o.clone(),
+            None => ::gen_pairing::generate_round_robin(twf.len() as u32, 1, None),
+        };
 
-                pairings.push(PairingResult {
-                    teams: (
-                        twf[(p[0] - 1) as usize].team.clone(),
-                        twf[(p[1] - 1) as usize].team.clone(),
-                    ),
-                    match_results: matches,
-                    winner: None,
-                });
-            }
+        for p in o {
+            let matches = vec![Match {
+                location,
+                extra: false,
+                penalties: false,
+                result: None,
+            }];
+
+            pairings.push(PairingResult {
+                teams: (
+                    twf[(p[0] - 1) as usize].team.clone(),
+                    twf[(p[1] - 1) as usize].team.clone(),
+                ),
+                match_results: matches,
+                winner: None,
+            });
         }
     } else if format.mode == ::config::Mode::Playoff {
         for i in 0..twf.len() / 2 {
-            let matches = vec![
-                Match {
-                    location,
-                    extra: true,
-                    penalties: true,
-                    result: None,
-                },
-            ];
+            let matches = vec![Match {
+                location,
+                extra: true,
+                penalties: true,
+                result: None,
+            }];
 
             pairings.push(PairingResult {
                 teams: (twf[2 * i].team.clone(), twf[2 * i + 1].team.clone()),

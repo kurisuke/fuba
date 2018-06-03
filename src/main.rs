@@ -9,6 +9,7 @@ extern crate toml;
 
 mod config;
 mod flagcheck;
+mod gen_pairing;
 mod multirun;
 mod result;
 mod sim;
@@ -42,7 +43,6 @@ fn main() {
             let mut sim = sim::Sim::new(&mut rng);
 
             let config = config::read_config(&config_file).unwrap();
-
             let round_results = result::calc(config, &mut sim);
             for r in round_results {
                 r.print();
