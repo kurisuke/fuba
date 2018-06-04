@@ -502,8 +502,11 @@ impl RoundStats {
         let mut s = format!("{:32}", n);
         if with_stats {
             s += &format!(
-                " {:2}-{:2} {:2}",
-                self.goals_for, self.goals_against, self.points
+                " {:3}-{:<3} {:3} {:3}",
+                self.goals_for,
+                self.goals_against,
+                self.goal_diff(),
+                self.points
             );
         }
         s
