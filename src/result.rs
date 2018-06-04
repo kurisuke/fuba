@@ -47,6 +47,11 @@ impl RoundStats {
     pub fn goal_diff(&self) -> i32 {
         self.goals_for as i32 - self.goals_against as i32
     }
+
+    pub fn vs_goal_diff(&self, id: &str) -> i32 {
+        *self.vs_goals_for.get(id).unwrap_or(&0) as i32
+            - *self.vs_goals_against.get(id).unwrap_or(&0) as i32
+    }
 }
 
 pub struct PairingResult {
@@ -394,15 +399,23 @@ impl RoundResult {
         match self.mode {
             ::config::Mode::RoundRobin => {
                 let sort_func = |x: &RoundStats, y: &RoundStats| {
+                    let opponent_id = (&x.team.borrow().id, &y.team.borrow().id);
                     let mut o = Ordering::Equal;
                     for r in rank_by.iter() {
                         o = match r {
                             ::config::RankBy::Points => y.points.cmp(&x.points),
                             ::config::RankBy::GoalDiff => y.goal_diff().cmp(&x.goal_diff()),
                             ::config::RankBy::Goals => y.goals_for.cmp(&x.goals_for),
-                            ::config::RankBy::VsPoints => o,
-                            ::config::RankBy::VsGoalDiff => o,
-                            ::config::RankBy::VsGoals => o,
+                            ::config::RankBy::VsPoints => y.vs_points
+                                .get(opponent_id.0)
+                                .unwrap_or(&0)
+                                .cmp(&x.vs_points.get(opponent_id.1).unwrap_or(&0)),
+                            ::config::RankBy::VsGoalDiff => y.vs_goal_diff(opponent_id.0)
+                                .cmp(&x.vs_goal_diff(opponent_id.1)),
+                            ::config::RankBy::VsGoals => y.vs_goals_for
+                                .get(opponent_id.0)
+                                .unwrap_or(&0)
+                                .cmp(&x.vs_goals_for.get(opponent_id.1).unwrap_or(&0)),
                             ::config::RankBy::Extra => o,
                             ::config::RankBy::Penalties => o,
                         };
