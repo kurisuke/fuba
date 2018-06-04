@@ -2,6 +2,7 @@
 name = "fuba"
 version = "0.1.0"
 authors = ["Peter Helbing <peter@abulafia.org>"]
+license = "GPL-2.0-or-later"
 
 [dependencies]
 clap = "2.31"
