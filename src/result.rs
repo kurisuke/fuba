@@ -19,6 +19,7 @@
 use config::Team;
 use sim::MatchResult;
 use std::cell::RefCell;
+use std::cmp::Ordering;
 use std::collections::HashMap;
 use std::rc::Rc;
 
@@ -40,6 +41,12 @@ pub struct RoundStats {
     pub vs_points: HashMap<String, u32>,
     pub vs_goals_for: HashMap<String, u32>,
     pub vs_goals_against: HashMap<String, u32>,
+}
+
+impl RoundStats {
+    pub fn goal_diff(&self) -> i32 {
+        self.goals_for as i32 - self.goals_against as i32
+    }
 }
 
 pub struct PairingResult {
@@ -383,22 +390,29 @@ impl RoundResult {
         }
     }
 
-    fn sort_stats(&mut self, _rank_by: &Vec<::config::RankBy>) -> () {
+    fn sort_stats(&mut self, rank_by: &Vec<::config::RankBy>) -> () {
         match self.mode {
             ::config::Mode::RoundRobin => {
-                self.stats.sort_by(|a, b| {
-                    let a_key = (
-                        &a.points,
-                        (a.goals_for as i32 - a.goals_against as i32),
-                        &a.goals_for,
-                    );
-                    let b_key = (
-                        &b.points,
-                        (b.goals_for as i32 - b.goals_against as i32),
-                        &b.goals_for,
-                    );
-                    b_key.cmp(&a_key)
-                });
+                let sort_func = |x: &RoundStats, y: &RoundStats| {
+                    let mut o = Ordering::Equal;
+                    for r in rank_by.iter() {
+                        o = match r {
+                            ::config::RankBy::Points => y.points.cmp(&x.points),
+                            ::config::RankBy::GoalDiff => y.goal_diff().cmp(&x.goal_diff()),
+                            ::config::RankBy::Goals => y.goals_for.cmp(&x.goals_for),
+                            ::config::RankBy::VsPoints => o,
+                            ::config::RankBy::VsGoalDiff => o,
+                            ::config::RankBy::VsGoals => o,
+                            ::config::RankBy::Extra => o,
+                            ::config::RankBy::Penalties => o,
+                        };
+                        if o != Ordering::Equal {
+                            break;
+                        }
+                    }
+                    o
+                };
+                self.stats.sort_by(|x, y| sort_func(x, y));
             }
             ::config::Mode::Playoff => {
                 let (mut winners, mut losers): (Vec<RoundStats>, Vec<RoundStats>) =
