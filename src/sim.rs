@@ -79,6 +79,7 @@ pub struct MatchResult {
     pub elo: (u32, u32),
 }
 
+#[derive(Debug, PartialEq)]
 pub enum MatchWinner {
     WinTeam1,
     WinTeam2,
@@ -242,4 +243,49 @@ fn calculate_elo(old_elo: (u32, u32), total: (u32, u32), k: f64) -> (u32, u32) {
 
 fn expected_result(d_elo: f64) -> f64 {
     1. / (10f64.powf(-d_elo / 400.) + 1.)
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn calculate_elo_equal() {
+        assert_eq!(
+            super::calculate_elo((2000, 2000), (0, 0), 60.),
+            (2000, 2000)
+        );
+    }
+
+    #[test]
+    fn calculate_elo_symmetric() {
+        let tmp = super::calculate_elo((2000, 1800), (0, 3), 60.);
+        assert_eq!(
+            (tmp.1, tmp.0),
+            super::calculate_elo((1800, 2000), (3, 0), 60.)
+        );
+    }
+
+    fn gen_test_result() -> super::MatchResult {
+        let goals = super::Goals {
+            first_half: (vec![10, 20], vec![30]),
+            second_half: (vec![30], vec![10, 20]),
+            extra_time: None,
+            penalties: None,
+        };
+        super::MatchResult {
+            goals,
+            elo: (2000, 2000),
+        }
+    }
+
+    #[test]
+    fn matchresult_winner() {
+        let m = gen_test_result();
+        assert_eq!(m.winner(), super::MatchWinner::Draw);
+    }
+
+    #[test]
+    fn matchresult_result_str() {
+        let m = gen_test_result();
+        assert_eq!(m.result_str(), String::from("3-3 (2-1)"));
+    }
 }
