@@ -198,19 +198,47 @@ impl<'a> Sim<'a> {
     }
 
     fn simulate_penalties(&mut self) -> (Vec<u32>, Vec<u32>) {
-        let r_goal = Uniform::new(1, 5);
+        let r_goal = Uniform::new(0f64, 1.);
+        let p_goal = 0.725;
 
         let mut goals = (vec![], vec![]);
+        {
+            // draw lots on which team starts
+            let g = if rand::random() {
+                (&mut goals.0, &mut goals.1)
+            } else {
+                (&mut goals.1, &mut goals.0)
+            };
 
-        let mut i = 0;
-
-        while (goals.0.len() == goals.1.len()) || (i <= 5) {
-            i += 1;
-            if r_goal.sample(self.rng) != 1 {
-                goals.0.push(i);
+            for i in 0..5 {
+                // first team tries penalty, chance is 75 percent
+                if g.1.len() as i32 - g.0.len() as i32 <= (5 - i) {
+                    if r_goal.sample(self.rng) < p_goal {
+                        g.0.push(i as u32 + 1);
+                    }
+                } else {
+                    break;
+                }
+                // second team tries penalty, chance is 75 percent
+                if g.0.len() as i32 - g.1.len() as i32 <= (5 - i) {
+                    if r_goal.sample(self.rng) < p_goal {
+                        g.1.push(i as u32 + 1);
+                    }
+                } else {
+                    break;
+                }
             }
-            if r_goal.sample(self.rng) != 1 {
-                goals.1.push(i);
+
+            // if still even score after 5 shots, continue until there is a winner
+            let mut i = 5;
+            while g.0.len() == g.1.len() {
+                i += 1;
+                if r_goal.sample(self.rng) < p_goal {
+                    g.0.push(i as u32);
+                }
+                if r_goal.sample(self.rng) < p_goal {
+                    g.1.push(i as u32);
+                }
             }
         }
 
