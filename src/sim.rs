@@ -16,11 +16,9 @@
  *
  */
 
-use std::f64::consts;
-use std::string::String;
-
 use rand;
-use rand::distributions::{IndependentSample, Range};
+use rand::distributions::{Distribution, Poisson, Uniform};
+use std::string::String;
 
 pub struct MatchOpts {
     pub elo: (u32, u32),
@@ -175,18 +173,20 @@ impl<'a> Sim<'a> {
     }
 
     fn simulate_period(&mut self, d_elo: f64, length: u32, avg_goal: f64) -> (Vec<u32>, Vec<u32>) {
-        let r_addtime = Range::new(1, length / 7);
-        let r_minute = Range::new(1, length + r_addtime.ind_sample(self.rng) + 1);
+        let r_addtime = Uniform::new(1, length / 7);
+        let r_minute = Uniform::new(1, length + r_addtime.sample(self.rng) + 1);
 
         let mut goals = (vec![], vec![]);
         let p_team = expected_result(d_elo);
-        let r_team = Range::new(0f64, 1.);
+        let r_team = Uniform::new(0f64, 1.);
 
-        for _ in 1..(self.poisson_gen(avg_goal) + 1) {
-            if r_team.ind_sample(self.rng) <= p_team {
-                goals.0.push(r_minute.ind_sample(self.rng));
+        let poi = Poisson::new(avg_goal);
+
+        for _ in 1..(poi.sample(&mut self.rng) + 1) {
+            if r_team.sample(self.rng) <= p_team {
+                goals.0.push(r_minute.sample(self.rng));
             } else {
-                goals.1.push(r_minute.ind_sample(self.rng));
+                goals.1.push(r_minute.sample(self.rng));
             }
         }
 
@@ -197,7 +197,7 @@ impl<'a> Sim<'a> {
     }
 
     fn simulate_penalties(&mut self) -> (Vec<u32>, Vec<u32>) {
-        let r_goal = Range::new(1, 5);
+        let r_goal = Uniform::new(1, 5);
 
         let mut goals = (vec![], vec![]);
 
@@ -205,28 +205,15 @@ impl<'a> Sim<'a> {
 
         while (goals.0.len() == goals.1.len()) || (i <= 5) {
             i += 1;
-            if r_goal.ind_sample(self.rng) != 1 {
+            if r_goal.sample(self.rng) != 1 {
                 goals.0.push(i);
             }
-            if r_goal.ind_sample(self.rng) != 1 {
+            if r_goal.sample(self.rng) != 1 {
                 goals.1.push(i);
             }
         }
 
         goals
-    }
-
-    fn poisson_gen(&mut self, lambda: f64) -> i32 {
-        let between = Range::new(0f64, 1.);
-        let l = consts::E.powf(-lambda);
-        let mut k = 0;
-        let mut p = 1f64;
-        while {
-            k += 1;
-            p *= between.ind_sample(self.rng);
-            p > l
-        } {}
-        k - 1
     }
 }
 
