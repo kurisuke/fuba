@@ -110,7 +110,10 @@ pub fn calc(config: ::config::Config, sim: &mut ::sim::Sim) -> Vec<RoundResult> 
         result.calc(sim, format.borrow().weight);
 
         // update stats
-        result.update_stats();
+        result.update_stats(
+            format.borrow().points_for_win,
+            format.borrow().points_for_draw,
+        );
         result.sort_stats(&format.borrow().rank_by);
         result.set_flags();
 
@@ -325,7 +328,7 @@ impl RoundResult {
         }
     }
 
-    fn update_stats(&mut self) -> () {
+    fn update_stats(&mut self, points_for_win: u32, points_for_draw: u32) -> () {
         for pairing in self.pairings.iter() {
             let pt = &pairing.teams;
             let opponent_id = (pt.1.borrow().id.clone(), pt.0.borrow().id.clone());
@@ -335,28 +338,28 @@ impl RoundResult {
                 match res.winner() {
                     ::sim::MatchWinner::WinTeam1 => {
                         let mut mod_team = get_stat_line(&mut self.stats, &pt.0);
-                        mod_team.points += 3;
+                        mod_team.points += points_for_win;
                         let v = mod_team.vs_points.entry(opponent_id.0.clone()).or_insert(0);
-                        *v += 3;
+                        *v += points_for_win;
                     }
                     ::sim::MatchWinner::WinTeam2 => {
                         let mut mod_team = get_stat_line(&mut self.stats, &pt.1);
-                        mod_team.points += 3;
+                        mod_team.points += points_for_win;
                         let v = mod_team.vs_points.entry(opponent_id.1.clone()).or_insert(0);
-                        *v += 3;
+                        *v += points_for_win;
                     }
                     ::sim::MatchWinner::Draw => {
                         {
                             let mut mod_team = get_stat_line(&mut self.stats, &pt.0);
-                            mod_team.points += 1;
+                            mod_team.points += points_for_draw;
                             let v = mod_team.vs_points.entry(opponent_id.0.clone()).or_insert(0);
-                            *v += 1;
+                            *v += points_for_draw;
                         }
                         {
                             let mut mod_team = get_stat_line(&mut self.stats, &pt.1);
-                            mod_team.points += 1;
+                            mod_team.points += points_for_draw;
                             let v = mod_team.vs_points.entry(opponent_id.1.clone()).or_insert(0);
-                            *v += 1;
+                            *v += points_for_draw;
                         }
                     }
                 };

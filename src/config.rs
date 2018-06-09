@@ -60,6 +60,10 @@ pub struct Format {
     pub copy: bool,
     #[serde(default = "def_weight")]
     pub weight: f64,
+    #[serde(default = "def_points_for_win")]
+    pub points_for_win: u32,
+    #[serde(default = "def_points_for_draw")]
+    pub points_for_draw: u32,
 }
 
 fn def_false() -> bool {
@@ -72,6 +76,14 @@ fn def_legs() -> u32 {
 
 fn def_weight() -> f64 {
     return 60.;
+}
+
+fn def_points_for_win() -> u32 {
+    return 3;
+}
+
+fn def_points_for_draw() -> u32 {
+    return 1;
 }
 
 #[derive(Deserialize, Clone, PartialEq)]
