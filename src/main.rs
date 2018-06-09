@@ -32,6 +32,18 @@ mod multirun;
 mod result;
 mod sim;
 
+use rand::prng::XorShiftRng;
+use rand::{FromEntropy, SeedableRng};
+
+fn convert_to_seed(s: &String) -> [u8; 16] {
+    let mut v: Vec<u8> = s.bytes().collect();
+    v.resize(16, 0);
+
+    let mut seed: [u8; 16] = Default::default();
+    seed.copy_from_slice(&v[..]);
+    seed
+}
+
 fn main() {
     let a = clap::App::new("fuba")
         .version(crate_version!())
@@ -57,10 +69,14 @@ fn main() {
             ::multirun::multirun(String::from(config_file), n, num_threads);
         }
         None => {
-            let mut rng = rand::thread_rng();
+            let config = config::read_config(&config_file).unwrap();
+
+            let mut rng = match config.seed {
+                Some(ref x) => XorShiftRng::from_seed(convert_to_seed(x)),
+                None => XorShiftRng::from_entropy(),
+            };
             let mut sim = sim::Sim::new(&mut rng);
 
-            let config = config::read_config(&config_file).unwrap();
             let round_results = result::calc(config, &mut sim);
             for r in round_results {
                 r.print();

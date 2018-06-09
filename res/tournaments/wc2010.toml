@@ -1,5 +1,5 @@
 name = "2010 FIFA World Cup"
-seed = 12345678
+seed = "12345678"
 
 root = "rank"
 

@@ -1,5 +1,5 @@
 name = "1. Bundesliga 2018/19"
-seed = 12345678
+seed = "12345678"
 
 root = "liga"
 

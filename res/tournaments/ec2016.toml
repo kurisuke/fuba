@@ -1,5 +1,5 @@
 name = "2016 UEFA European Championship"
-seed = 12345678
+seed = "12345678"
 
 root = "fi"
 

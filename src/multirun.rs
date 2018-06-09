@@ -16,7 +16,8 @@
  *
  */
 
-use rand;
+use rand::prng::XorShiftRng;
+use rand::FromEntropy;
 use std::collections::HashMap;
 use std::sync::mpsc;
 use std::thread;
@@ -43,7 +44,7 @@ pub fn multirun(config_file: String, n: u32, num_threads: u32) {
         let local_tx = mpsc::Sender::clone(&tx);
         let local_config_file = config_file.clone();
         thread_handles.push(thread::spawn(move || {
-            let mut rng = rand::thread_rng();
+            let mut rng = XorShiftRng::from_entropy();
             let mut sim = ::sim::Sim::new(&mut rng);
 
             let config = ::config::read_config(&local_config_file).unwrap();

@@ -30,7 +30,7 @@ use toml;
 
 pub struct Config {
     pub name: String,
-    pub seed: Option<u32>,
+    pub seed: Option<String>,
     pub root: Rc<RefCell<Round>>,
     pub team: Vec<Rc<RefCell<Team>>>,
     pub format: Vec<Rc<RefCell<Format>>>,
@@ -232,7 +232,7 @@ impl Clone for Config {
 #[serde(rename = "config")]
 struct ConfigPars {
     pub name: String,
-    pub seed: Option<u32>,
+    pub seed: Option<String>,
     pub root: String,
     pub team: Vec<Team>,
     pub format: Vec<Format>,

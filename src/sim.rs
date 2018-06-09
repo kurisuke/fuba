@@ -16,8 +16,9 @@
  *
  */
 
-use rand;
 use rand::distributions::{Distribution, Poisson, Uniform};
+use rand::prng::XorShiftRng;
+use rand::Rng;
 use std::string::String;
 
 pub struct MatchOpts {
@@ -134,11 +135,11 @@ impl MatchResult {
 }
 
 pub struct Sim<'a> {
-    rng: &'a mut rand::ThreadRng,
+    rng: &'a mut XorShiftRng,
 }
 
 impl<'a> Sim<'a> {
-    pub fn new(rng: &mut rand::ThreadRng) -> Sim {
+    pub fn new(rng: &mut XorShiftRng) -> Sim {
         Sim { rng: rng }
     }
 
@@ -204,7 +205,7 @@ impl<'a> Sim<'a> {
         let mut goals = (vec![], vec![]);
         {
             // draw lots on which team starts
-            let g = if rand::random() {
+            let g = if self.rng.gen() {
                 (&mut goals.0, &mut goals.1)
             } else {
                 (&mut goals.1, &mut goals.0)
