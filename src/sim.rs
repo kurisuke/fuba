@@ -232,8 +232,11 @@ impl<'a> Sim<'a> {
 
             // if still even score after 5 shots, continue until there is a winner
             let mut i = 5;
+            let mut goal_prob = 0.75;
             while g.0.len() == g.1.len() {
                 i += 1;
+                goal_prob *= 0.9;
+                let r_goal = Uniform::new(goal_prob, 1.);
                 if r_goal.sample(self.rng) < p_goal {
                     g.0.push(i as u32);
                 }
