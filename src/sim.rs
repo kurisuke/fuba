@@ -16,26 +16,21 @@
  *
  */
 
+use common::MatchWinner;
+
 use rand::distributions::{Distribution, Poisson, Uniform};
 use rand::prng::XorShiftRng;
 use rand::Rng;
 use std::string::String;
 
-pub struct MatchOpts {
-    pub elo: (u32, u32),
-    pub weight: f64,
-    pub extra: bool,
-    pub penalties: bool,
-}
-
-pub struct Goals {
+pub struct MatchResult {
     first_half: (Vec<u32>, Vec<u32>),
     second_half: (Vec<u32>, Vec<u32>),
     extra_time: Option<(Vec<u32>, Vec<u32>)>,
     penalties: Option<(Vec<u32>, Vec<u32>)>,
 }
 
-impl Goals {
+impl MatchResult {
     pub fn total_after_first(&self) -> (u32, u32) {
         (
             self.first_half.0.len() as u32,
@@ -73,23 +68,9 @@ impl Goals {
     pub fn draw(&self) -> bool {
         self.total().0 == self.total().1
     }
-}
 
-pub struct MatchResult {
-    pub goals: Goals,
-    pub elo: (u32, u32),
-}
-
-#[derive(Debug, PartialEq)]
-pub enum MatchWinner {
-    WinTeam1,
-    WinTeam2,
-    Draw,
-}
-
-impl MatchResult {
     pub fn winner(&self) -> MatchWinner {
-        let r = self.goals.total().0 as i32 - self.goals.total().1 as i32;
+        let r = self.total().0 as i32 - self.total().1 as i32;
         if r > 0 {
             MatchWinner::WinTeam1
         } else if r < 0 {
@@ -101,31 +82,31 @@ impl MatchResult {
 
     pub fn result_str(&self) -> String {
         let mut s = String::new();
-        s += &format!("{}-{}", self.goals.total().0, self.goals.total().1);
+        s += &format!("{}-{}", self.total().0, self.total().1);
 
         let goals_first = format!(
             "{}-{}",
-            self.goals.total_after_first().0,
-            self.goals.total_after_first().1
+            self.total_after_first().0,
+            self.total_after_first().1
         );
         let goals_second = format!(
             "{}-{}",
-            self.goals.total_after_second().0,
-            self.goals.total_after_second().1
+            self.total_after_second().0,
+            self.total_after_second().1
         );
         let goals_extra = format!(
             "{}-{}",
-            self.goals.total_after_extra().0,
-            self.goals.total_after_extra().1
+            self.total_after_extra().0,
+            self.total_after_extra().1
         );
 
-        if let Some(_) = self.goals.penalties {
-            if let Some(_) = self.goals.extra_time {
+        if let Some(_) = self.penalties {
+            if let Some(_) = self.extra_time {
                 s += &format!("p ({}, {}, {})", goals_first, goals_second, goals_extra);
             } else {
                 s += &format!("p ({}, {})", goals_first, goals_second);
             }
-        } else if let Some(_) = self.goals.extra_time {
+        } else if let Some(_) = self.extra_time {
             s += &format!("e ({}, {})", goals_first, goals_second);
         } else {
             s += &format!(" ({})", goals_first);
@@ -143,35 +124,27 @@ impl<'a> Sim<'a> {
         Sim { rng: rng }
     }
 
-    pub fn simulate(&mut self, opts: MatchOpts) -> MatchResult {
-        let d_elo = (opts.elo.0 as i32 - opts.elo.1 as i32) as f64;
+    pub fn simulate(&mut self, elo: (u32, u32)) -> MatchResult {
+        let d_elo = (elo.0 as i32 - elo.1 as i32) as f64;
         let avg_goal = 2.3 + d_elo.abs() / 600.0;
 
-        let mut res = MatchResult {
-            goals: Goals {
-                first_half: self.simulate_period(d_elo, 45, avg_goal / 2.),
-                second_half: self.simulate_period(d_elo, 45, avg_goal / 2.),
-                extra_time: None,
-                penalties: None,
-            },
-            elo: (0, 0),
-        };
-
-        if opts.extra {
-            if res.goals.draw() {
-                res.goals.extra_time = Some(self.simulate_period(d_elo, 30, avg_goal / 2.));
-            }
+        MatchResult {
+            first_half: self.simulate_period(d_elo, 45, avg_goal / 2.),
+            second_half: self.simulate_period(d_elo, 45, avg_goal / 2.),
+            extra_time: None,
+            penalties: None,
         }
+    }
 
-        if opts.penalties {
-            if res.goals.draw() {
-                res.goals.penalties = Some(self.simulate_penalties());
-            }
-        }
+    pub fn add_extra(&mut self, res: &mut MatchResult, elo: (u32, u32)) {
+        let d_elo = (elo.0 as i32 - elo.1 as i32) as f64;
+        let avg_goal = 2.3 + d_elo.abs() / 600.0;
 
-        res.elo = calculate_elo(opts.elo, res.goals.total_after_extra(), opts.weight);
+        res.extra_time = Some(self.simulate_period(d_elo, 30, avg_goal / 2.));
+    }
 
-        res
+    pub fn add_penalties(&mut self, res: &mut MatchResult) {
+        res.penalties = Some(self.simulate_penalties());
     }
 
     fn simulate_period(&mut self, d_elo: f64, length: u32, avg_goal: f64) -> (Vec<u32>, Vec<u32>) {
@@ -250,7 +223,7 @@ impl<'a> Sim<'a> {
     }
 }
 
-fn calculate_elo(old_elo: (u32, u32), total: (u32, u32), k: f64) -> (u32, u32) {
+pub fn calculate_elo(old_elo: (u32, u32), total: (u32, u32), k: f64) -> (u32, u32) {
     let g = match (total.0 as i32 - total.1 as i32).abs() {
         0...1 => 1.,
         2 => 1.5,

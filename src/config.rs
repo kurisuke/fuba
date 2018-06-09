@@ -98,7 +98,7 @@ pub enum Mode {
     RankingSort,
 }
 
-#[derive(Deserialize, Clone)]
+#[derive(Deserialize, Clone, PartialEq)]
 pub enum RankBy {
     #[serde(rename = "points")]
     Points,
@@ -112,6 +112,12 @@ pub enum RankBy {
     VsGoalDiff,
     #[serde(rename = "vsgoals")]
     VsGoals,
+    #[serde(rename = "awaygoals")]
+    AwayGoals,
+    #[serde(rename = "replayonce")]
+    ReplayOnce,
+    #[serde(rename = "replayalways")]
+    ReplayAlways,
     #[serde(rename = "extra")]
     Extra,
     #[serde(rename = "penalties")]

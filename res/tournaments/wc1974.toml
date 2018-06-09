@@ -1,5 +1,5 @@
 name = "1974 FIFA World Cup"
-# seed = "12345678"
+seed = "12345678"
 
 root = "rank"
 
@@ -41,6 +41,13 @@ mode = "playoff"
 random = false
 neutral = true
 rank_by = ["extra", "penalties"]
+
+[[format]]
+id = "f_final"
+mode = "playoff"
+random = false
+neutral = true
+rank_by = ["extra", "replayonce", "penalties"]
 
 [[format]]
 id = "f_ranking"
@@ -125,7 +132,7 @@ entrant = [
 [[round]]
 id = "fi"
 name = "Final"
-format = "f_playoff"
+format = "f_final"
 entrant = [
     { prev = "group-a", pos = 1 },
     { prev = "group-b", pos = 1 },

@@ -43,6 +43,13 @@ neutral = true
 rank_by = ["extra", "penalties"]
 
 [[format]]
+id = "f_final"
+mode = "playoff"
+random = false
+neutral = true
+rank_by = ["extra", "replayonce", "penalties"]
+
+[[format]]
 id = "f_ranking"
 mode = "ranking"
 rank_by = []
@@ -125,7 +132,7 @@ entrant = [
 [[round]]
 id = "fi"
 name = "Final"
-format = "f_playoff"
+format = "f_final"
 entrant = [
     { prev = "group-a", pos = 1 },
     { prev = "group-b", pos = 1 },

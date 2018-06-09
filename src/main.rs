@@ -25,6 +25,7 @@ extern crate rand;
 extern crate serde_derive;
 extern crate toml;
 
+mod common;
 mod config;
 mod flagcheck;
 mod gen_pairing;
