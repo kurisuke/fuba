@@ -53,6 +53,7 @@ fn main() {
         .args_from_usage(
             "-s, --simulate=[N]    'Simulate N runs and print statistics'
              -n, --num-threads=[N] 'Number of Threads (for simulation mode)'
+             -i, --ignore-seed     'Ignore random seed (for tournament mode)'
              <CONFIG>           'Configuration file (toml)'",
         )
         .get_matches();
@@ -72,9 +73,14 @@ fn main() {
         None => {
             let config = config::read_config(&config_file).unwrap();
 
-            let mut rng = match config.seed {
-                Some(ref x) => XorShiftRng::from_seed(convert_to_seed(x)),
-                None => XorShiftRng::from_entropy(),
+            let mut rng = if let Some(ref x) = config.seed {
+                if a.is_present("ignore-seed") {
+                    XorShiftRng::from_entropy()
+                } else {
+                    XorShiftRng::from_seed(convert_to_seed(x))
+                }
+            } else {
+                XorShiftRng::from_entropy()
             };
             let mut sim = sim::Sim::new(&mut rng);
 
