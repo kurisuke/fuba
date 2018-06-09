@@ -1,0 +1,233 @@
+name = "2006 FIFA World Cup"
+seed = "12345678"
+
+root = "rank"
+
+team = [
+    { id = "ger", name = "Germany", elo = 1997 },
+    { id = "crc", name = "Costa Rica", elo = 1724 },
+    { id = "pol", name = "Poland", elo = 1822 },
+    { id = "ecu", name = "Ecuador", elo = 1699 },
+
+    { id = "eng", name = "England", elo = 1973 },
+    { id = "par", name = "Paraguay", elo = 1779 },
+    { id = "tri", name = "Trinidad and Tobago", elo = 1568 },
+    { id = "swe", name = "Sweden", elo = 1861 },
+
+    { id = "arg", name = "Argentina", elo = 1922 },
+    { id = "civ", name = "Ivory Coast", elo = 1768 },
+    { id = "scg", name = "Serbia and Montenegro", elo = 1799 },
+    { id = "ned", name = "Netherlands", elo = 1995 },
+
+    { id = "mex", name = "Mexico", elo = 1838 },
+    { id = "iri", name = "Iran", elo = 1813 },
+    { id = "ang", name = "Angola", elo = 1565 },
+    { id = "por", name = "Portugal", elo = 1915 },
+
+    { id = "ita", name = "Italy", elo = 1944 },
+    { id = "gha", name = "Ghana", elo = 1618 },
+    { id = "usa", name = "United States", elo = 1838 },
+    { id = "cze", name = "Czech Republic", elo = 1972 },
+
+    { id = "bra", name = "Brazil", elo = 2034 },
+    { id = "cro", name = "Croatia", elo = 1838 },
+    { id = "aus", name = "Australia", elo = 1802 },
+    { id = "jpn", name = "Japan", elo = 1789 },
+
+    { id = "fra", name = "France", elo = 1973 },
+    { id = "sui", name = "Switzerland", elo = 1798 },
+    { id = "kor", name = "South Korea", elo = 1731 },
+    { id = "tog", name = "Togo", elo = 1491 },
+
+    { id = "esp", name = "Spain", elo = 1964 },
+    { id = "ukr", name = "Ukraine", elo = 1790 },
+    { id = "tun", name = "Tunisia", elo = 1708 },
+    { id = "ksa", name = "Saudi Arabia", elo = 1584 },
+]
+
+[[format]]
+id = "f_group"
+mode = "roundrobin"
+order = [[1,2], [3,4],
+         [1,3], [4,2],
+         [4,1], [2,3]]
+neutral = true
+rank_by = ["points", "goaldiff", "goals", "vspoints", "vsgoaldiff", "vsgoals"]
+
+[[format]]
+id = "f_playoff"
+mode = "playoff"
+random = false
+neutral = true
+rank_by = ["extra", "penalties"]
+
+[[format]]
+id = "f_ranking"
+mode = "ranking"
+rank_by = []
+
+[[round]]
+id = "group-a"
+name = "Group A"
+format = "f_group"
+entrant = [
+    { id = "ger" },
+    { id = "crc" },
+    { id = "pol" },
+    { id = "ecu" },
+]
+
+[[round]]
+id = "group-b"
+name = "Group B"
+format = "f_group"
+entrant = [
+    { id = "eng" },
+    { id = "par" },
+    { id = "tri" },
+    { id = "swe" },
+]
+
+[[round]]
+id = "group-c"
+name = "Group C"
+format = "f_group"
+entrant = [
+    { id = "arg" },
+    { id = "civ" },
+    { id = "scg" },
+    { id = "ned" },
+]
+
+[[round]]
+id = "group-d"
+name = "Group D"
+format = "f_group"
+entrant = [
+    { id = "mex" },
+    { id = "iri" },
+    { id = "ang" },
+    { id = "por" },
+]
+
+[[round]]
+id = "group-e"
+name = "Group E"
+format = "f_group"
+entrant = [
+    { id = "ita" },
+    { id = "gha" },
+    { id = "usa" },
+    { id = "cze" },
+]
+
+[[round]]
+id = "group-f"
+name = "Group F"
+format = "f_group"
+entrant = [
+    { id = "bra" },
+    { id = "cro" },
+    { id = "aus" },
+    { id = "jpn" },
+]
+
+[[round]]
+id = "group-g"
+name = "Group G"
+format = "f_group"
+entrant = [
+    { id = "fra" },
+    { id = "sui" },
+    { id = "kor" },
+    { id = "tog" },
+]
+
+[[round]]
+id = "group-h"
+name = "Group H"
+format = "f_group"
+entrant = [
+    { id = "esp" },
+    { id = "ukr" },
+    { id = "tun" },
+    { id = "ksa" },
+]
+
+[[round]]
+id = "r16"
+name = "Round of 16"
+format = "f_playoff"
+entrant = [
+    { prev = "group-a", pos = 1 },
+    { prev = "group-b", pos = 2 },
+    { prev = "group-c", pos = 1 },
+    { prev = "group-d", pos = 2 },
+    { prev = "group-b", pos = 1 },
+    { prev = "group-a", pos = 2 },
+    { prev = "group-d", pos = 1 },
+    { prev = "group-c", pos = 2 },
+    { prev = "group-e", pos = 1 },
+    { prev = "group-f", pos = 2 },
+    { prev = "group-g", pos = 1 },
+    { prev = "group-h", pos = 2 },
+    { prev = "group-f", pos = 1 },
+    { prev = "group-e", pos = 2 },
+    { prev = "group-h", pos = 1 },
+    { prev = "group-g", pos = 2 },
+]
+
+[[round]]
+id = "qf"
+name = "Quarterfinals"
+format = "f_playoff"
+entrant = [
+    { prev = "r16", pos = 1 },
+    { prev = "r16", pos = 2 },
+    { prev = "r16", pos = 5 },
+    { prev = "r16", pos = 6 },
+    { prev = "r16", pos = 3 },
+    { prev = "r16", pos = 4 },
+    { prev = "r16", pos = 7 },
+    { prev = "r16", pos = 8 },
+]
+
+[[round]]
+id = "sf"
+name = "Semifinals"
+format = "f_playoff"
+entrant = [
+    { prev = "qf", pos = 1 },
+    { prev = "qf", pos = 2 },
+    { prev = "qf", pos = 3 },
+    { prev = "qf", pos = 4 },
+]
+
+[[round]]
+id = "3p"
+name = "Third place play-off"
+format = "f_playoff"
+entrant = [
+    { prev = "sf", pos = 3 },
+    { prev = "sf", pos = 4 },
+]
+
+[[round]]
+id = "fi"
+name = "Final"
+format = "f_playoff"
+entrant = [
+    { prev = "sf", pos = 1 },
+    { prev = "sf", pos = 2 },
+]
+
+[[round]]
+id = "rank"
+name = "Final ranking"
+format = "f_ranking"
+entrant = [
+    { prev = "fi", pos = 1 },
+    { prev = "fi", pos = 2 },
+    { prev = "3p", pos = 1 },
+    { prev = "3p", pos = 2 },
+]

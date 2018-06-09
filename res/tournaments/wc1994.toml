@@ -1,0 +1,314 @@
+name = "1994 FIFA World Cup"
+seed = "12345678"
+
+root = "rank"
+
+team = [
+    { id = "usa", name = "United States", elo = 1705 },
+    { id = "sui", name = "Switzerland", elo = 1873 },
+    { id = "col", name = "Colombia", elo = 1942 },
+    { id = "rou", name = "Romania", elo = 1837 },
+
+    { id = "bra", name = "Brazil", elo = 1963 },
+    { id = "rus", name = "Russia", elo = 1866 },
+    { id = "cmr", name = "Cameroon", elo = 1684 },
+    { id = "swe", name = "Sweden", elo = 1907 },
+
+    { id = "ger", name = "Germany", elo = 2009 },
+    { id = "bol", name = "Bolivia", elo = 1701 },
+    { id = "esp", name = "Spain", elo = 1893 },
+    { id = "kor", name = "South Korea", elo = 1665 },
+
+    { id = "arg", name = "Argentina", elo = 1915 },
+    { id = "gre", name = "Greece", elo = 1689 },
+    { id = "ngr", name = "Nigeria", elo = 1742 },
+    { id = "bul", name = "Bulgaria", elo = 1771 },
+
+    { id = "ita", name = "Italy", elo = 1986 },
+    { id = "irl", name = "Republic of Ireland", elo = 1881 },
+    { id = "nor", name = "Norway", elo = 1852 },
+    { id = "mex", name = "Mexico", elo = 1853 },
+
+    { id = "bel", name = "Belgium", elo = 1824 },
+    { id = "mar", name = "Morocco", elo = 1672 },
+    { id = "ned", name = "Netherlands", elo = 1992 },
+    { id = "ksa", name = "Saudi Arabia", elo = 1640 },
+]
+
+[[format]]
+id = "f_group"
+mode = "roundrobin"
+order = [[1,2], [3,4],
+         [1,3], [4,2],
+         [1,4], [2,3]]
+neutral = true
+rank_by = ["points", "goaldiff", "goals", "vspoints", "vsgoaldiff", "vsgoals"]
+
+[[format]]
+id = "f_playoff"
+mode = "playoff"
+random = false
+neutral = true
+rank_by = ["extra", "penalties"]
+
+[[format]]
+id = "f_ranking"
+mode = "ranking"
+rank_by = []
+
+[[format]]
+id = "f_rank3"
+mode = "ranking_sort"
+copy = true
+rank_by = ["points", "goaldiff", "goals"]
+
+[[round]]
+id = "group-a"
+name = "Group A"
+format = "f_group"
+entrant = [
+    { id = "usa" },
+    { id = "sui" },
+    { id = "col" },
+    { id = "rou" },
+]
+
+[[round]]
+id = "group-b"
+name = "Group B"
+format = "f_group"
+entrant = [
+    { id = "bra" },
+    { id = "rus" },
+    { id = "cmr" },
+    { id = "swe" },
+]
+
+[[round]]
+id = "group-c"
+name = "Group C"
+format = "f_group"
+entrant = [
+    { id = "ger" },
+    { id = "bol" },
+    { id = "esp" },
+    { id = "kor" },
+]
+
+[[round]]
+id = "group-d"
+name = "Group D"
+format = "f_group"
+entrant = [
+    { id = "arg" },
+    { id = "gre" },
+    { id = "ngr" },
+    { id = "bul" },
+]
+
+[[round]]
+id = "group-e"
+name = "Group E"
+format = "f_group"
+entrant = [
+    { id = "ita" },
+    { id = "irl" },
+    { id = "nor" },
+    { id = "mex" },
+]
+
+[[round]]
+id = "group-f"
+name = "Group F"
+format = "f_group"
+entrant = [
+    { id = "bel" },
+    { id = "mar" },
+    { id = "ned" },
+    { id = "ksa" },
+]
+
+[[round]]
+id = "rank3"
+name = "Ranking of 3rd placed teams"
+format = "f_rank3"
+entrant = [
+    { prev = "group-a", pos = 3, set_flag = { cond = "rankmin", value = 4, flag = "a" } },
+    { prev = "group-b", pos = 3, set_flag = { cond = "rankmin", value = 4, flag = "b" } },
+    { prev = "group-c", pos = 3, set_flag = { cond = "rankmin", value = 4, flag = "c" } },
+    { prev = "group-d", pos = 3, set_flag = { cond = "rankmin", value = 4, flag = "d" } },
+    { prev = "group-e", pos = 3, set_flag = { cond = "rankmin", value = 4, flag = "e" } },
+    { prev = "group-f", pos = 3, set_flag = { cond = "rankmin", value = 4, flag = "f" } },
+]
+
+[[round]]
+id = "r16"
+name = "Round of 16"
+format = "f_playoff"
+
+[[round.entrant]]
+    prev = "group-c"
+    pos = 1
+[[round.entrant]]
+    prev = "rank3"
+    if_flag = ["a&b&c&d", "a",
+               "a&b&c&e", "b",
+               "a&b&c&f", "b",
+               "a&b&d&e", "b",
+               "a&b&d&f", "b",
+               "a&b&e&f", "b",
+               "a&c&d&e", "a",
+               "a&c&d&f", "a",
+               "a&c&e&f", "f",
+               "a&d&e&f", "f",
+               "b&c&d&e", "b",
+               "b&c&d&f", "b",
+               "b&c&e&f", "b",
+               "b&d&e&f", "b",
+               "c&d&e&f", "f"]
+
+[[round.entrant]]
+    prev = "group-c"
+    pos = 2
+[[round.entrant]]
+    prev = "group-a"
+    pos = 2
+
+[[round.entrant]]
+    prev = "group-f"
+    pos = 2
+[[round.entrant]]
+    prev = "group-b"
+    pos = 2
+
+[[round.entrant]]
+    prev = "group-a"
+    pos = 1
+[[round.entrant]]
+    prev = "rank3"
+    if_flag = ["a&b&c&d", "c",
+               "a&b&c&e", "c",
+               "a&b&c&f", "c",
+               "a&b&d&e", "d",
+               "a&b&d&f", "d",
+               "a&b&e&f", "e",
+               "a&c&d&e", "c",
+               "a&c&d&f", "c",
+               "a&c&e&f", "c",
+               "a&d&e&f", "d",
+               "b&c&d&e", "c",
+               "b&c&d&f", "c",
+               "b&c&e&f", "e",
+               "b&d&e&f", "e",
+               "c&d&e&f", "c"]
+
+[[round.entrant]]
+    prev = "group-f"
+    pos = 1
+[[round.entrant]]
+    prev = "group-e"
+    pos = 2
+
+[[round.entrant]]
+    prev = "group-b"
+    pos = 1
+[[round.entrant]]
+    prev = "rank3"
+    if_flag = ["a&b&c&d", "d",
+               "a&b&c&e", "a",
+               "a&b&c&f", "a",
+               "a&b&d&e", "a",
+               "a&b&d&f", "a",
+               "a&b&e&f", "a",
+               "a&c&d&e", "d",
+               "a&c&d&f", "d",
+               "a&c&e&f", "a",
+               "a&d&e&f", "a",
+               "b&c&d&e", "d",
+               "b&c&d&f", "d",
+               "b&c&e&f", "c",
+               "b&d&e&f", "d",
+               "c&d&e&f", "d"]
+
+[[round.entrant]]
+    prev = "group-d"
+    pos = 1
+[[round.entrant]]
+    prev = "rank3"
+    if_flag = ["a&b&c&d", "b",
+               "a&b&c&e", "e",
+               "a&b&c&f", "f",
+               "a&b&d&e", "e",
+               "a&b&d&f", "f",
+               "a&b&e&f", "f",
+               "a&c&d&e", "e",
+               "a&c&d&f", "f",
+               "a&c&e&f", "e",
+               "a&d&e&f", "e",
+               "b&c&d&e", "e",
+               "b&c&d&f", "f",
+               "b&c&e&f", "f",
+               "b&d&e&f", "f",
+               "c&d&e&f", "e"]
+
+[[round.entrant]]
+    prev = "group-e"
+    pos = 1
+[[round.entrant]]
+    prev = "group-d"
+    pos = 2
+
+[[round]]
+id = "qf"
+name = "Quarterfinals"
+format = "f_playoff"
+entrant = [
+    { prev = "r16", pos = 7 },
+    { prev = "r16", pos = 2 },
+    { prev = "r16", pos = 5 },
+    { prev = "r16", pos = 6 },
+    { prev = "r16", pos = 8 },
+    { prev = "r16", pos = 1 },
+    { prev = "r16", pos = 4 },
+    { prev = "r16", pos = 3 },
+]
+
+[[round]]
+id = "sf"
+name = "Semifinals"
+format = "f_playoff"
+entrant = [
+    { prev = "qf", pos = 3 },
+    { prev = "qf", pos = 1 },
+    { prev = "qf", pos = 4 },
+    { prev = "qf", pos = 2 },
+]
+
+[[round]]
+id = "3p"
+name = "Third place play-off"
+format = "f_playoff"
+entrant = [
+    { prev = "sf", pos = 4 },
+    { prev = "sf", pos = 3 },
+]
+
+[[round]]
+id = "fi"
+name = "Final"
+format = "f_playoff"
+entrant = [
+    { prev = "sf", pos = 2 },
+    { prev = "sf", pos = 1 },
+]
+
+[[round]]
+id = "rank"
+name = "Final ranking"
+format = "f_ranking"
+entrant = [
+    { prev = "fi", pos = 1 },
+    { prev = "fi", pos = 2 },
+    { prev = "3p", pos = 1 },
+    { prev = "3p", pos = 2 },
+]
