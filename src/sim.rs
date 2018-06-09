@@ -65,10 +65,6 @@ impl MatchResult {
         total
     }
 
-    pub fn draw(&self) -> bool {
-        self.total().0 == self.total().1
-    }
-
     pub fn winner(&self) -> MatchWinner {
         let r = self.total().0 as i32 - self.total().1 as i32;
         if r > 0 {
@@ -270,15 +266,11 @@ mod tests {
     }
 
     fn gen_test_result() -> super::MatchResult {
-        let goals = super::Goals {
+        super::MatchResult {
             first_half: (vec![10, 20], vec![30]),
             second_half: (vec![30], vec![10, 20]),
             extra_time: None,
             penalties: None,
-        };
-        super::MatchResult {
-            goals,
-            elo: (2000, 2000),
         }
     }
 
