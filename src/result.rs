@@ -513,67 +513,64 @@ impl RoundResult {
             let pt = &pairing.teams;
             let opponent_id = (pt.1.borrow().id.clone(), pt.0.borrow().id.clone());
 
-            for m in pairing.match_results.iter() {
-                let res = m.result.as_ref().unwrap();
-                match res.winner() {
-                    MatchWinner::WinTeam1 => {
-                        let mut mod_team = get_stat_line(&mut self.stats, &pt.0);
-                        mod_team.points += points_for_win;
-                        let v = mod_team.vs_points.entry(opponent_id.0.clone()).or_insert(0);
-                        *v += points_for_win;
-                    }
-                    MatchWinner::WinTeam2 => {
-                        let mut mod_team = get_stat_line(&mut self.stats, &pt.1);
-                        mod_team.points += points_for_win;
-                        let v = mod_team.vs_points.entry(opponent_id.1.clone()).or_insert(0);
-                        *v += points_for_win;
-                    }
-                    MatchWinner::Draw => {
-                        {
-                            let mut mod_team = get_stat_line(&mut self.stats, &pt.0);
-                            mod_team.points += points_for_draw;
-                            let v = mod_team.vs_points.entry(opponent_id.0.clone()).or_insert(0);
-                            *v += points_for_draw;
-                        }
-                        {
-                            let mut mod_team = get_stat_line(&mut self.stats, &pt.1);
-                            mod_team.points += points_for_draw;
-                            let v = mod_team.vs_points.entry(opponent_id.1.clone()).or_insert(0);
-                            *v += points_for_draw;
-                        }
-                    }
-                };
-
-                {
+            match pairing.winner.as_ref().unwrap() {
+                MatchWinner::WinTeam1 => {
                     let mut mod_team = get_stat_line(&mut self.stats, &pt.0);
-                    mod_team.goals_for += res.total().0;
-                    mod_team.goals_against += res.total().1;
-                    let v = mod_team
-                        .vs_goals_for
-                        .entry(opponent_id.0.clone())
-                        .or_insert(0);
-                    *v += res.total().0;
-                    let v = mod_team
-                        .vs_goals_against
-                        .entry(opponent_id.0.clone())
-                        .or_insert(0);
-                    *v += res.total().1;
+                    mod_team.points += points_for_win;
+                    let v = mod_team.vs_points.entry(opponent_id.0.clone()).or_insert(0);
+                    *v += points_for_win;
                 }
-                {
+                MatchWinner::WinTeam2 => {
                     let mut mod_team = get_stat_line(&mut self.stats, &pt.1);
-                    mod_team.goals_for += res.total().1;
-                    mod_team.goals_against += res.total().0;
-                    let v = mod_team
-                        .vs_goals_for
-                        .entry(opponent_id.1.clone())
-                        .or_insert(0);
-                    *v += res.total().1;
-                    let v = mod_team
-                        .vs_goals_against
-                        .entry(opponent_id.1.clone())
-                        .or_insert(0);
-                    *v += res.total().0;
+                    mod_team.points += points_for_win;
+                    let v = mod_team.vs_points.entry(opponent_id.1.clone()).or_insert(0);
+                    *v += points_for_win;
                 }
+                MatchWinner::Draw => {
+                    {
+                        let mut mod_team = get_stat_line(&mut self.stats, &pt.0);
+                        mod_team.points += points_for_draw;
+                        let v = mod_team.vs_points.entry(opponent_id.0.clone()).or_insert(0);
+                        *v += points_for_draw;
+                    }
+                    {
+                        let mut mod_team = get_stat_line(&mut self.stats, &pt.1);
+                        mod_team.points += points_for_draw;
+                        let v = mod_team.vs_points.entry(opponent_id.1.clone()).or_insert(0);
+                        *v += points_for_draw;
+                    }
+                }
+            };
+
+            {
+                let mut mod_team = get_stat_line(&mut self.stats, &pt.0);
+                mod_team.goals_for += pairing.total_goals().0;
+                mod_team.goals_against += pairing.total_goals().1;
+                let v = mod_team
+                    .vs_goals_for
+                    .entry(opponent_id.0.clone())
+                    .or_insert(0);
+                *v += pairing.total_goals().0;
+                let v = mod_team
+                    .vs_goals_against
+                    .entry(opponent_id.0.clone())
+                    .or_insert(0);
+                *v += pairing.total_goals().1;
+            }
+            {
+                let mut mod_team = get_stat_line(&mut self.stats, &pt.1);
+                mod_team.goals_for += pairing.total_goals().1;
+                mod_team.goals_against += pairing.total_goals().0;
+                let v = mod_team
+                    .vs_goals_for
+                    .entry(opponent_id.1.clone())
+                    .or_insert(0);
+                *v += pairing.total_goals().1;
+                let v = mod_team
+                    .vs_goals_against
+                    .entry(opponent_id.1.clone())
+                    .or_insert(0);
+                *v += pairing.total_goals().0;
             }
         }
     }

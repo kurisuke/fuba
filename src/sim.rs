@@ -16,8 +16,6 @@
  *
  */
 
-use common::MatchWinner;
-
 use rand::distributions::{Distribution, Poisson, Uniform};
 use rand::prng::XorShiftRng;
 use rand::Rng;
@@ -63,17 +61,6 @@ impl MatchResult {
             total.1 += x.1.len() as u32;
         }
         total
-    }
-
-    pub fn winner(&self) -> MatchWinner {
-        let r = self.total().0 as i32 - self.total().1 as i32;
-        if r > 0 {
-            MatchWinner::WinTeam1
-        } else if r < 0 {
-            MatchWinner::WinTeam2
-        } else {
-            MatchWinner::Draw
-        }
     }
 
     pub fn result_str(&self) -> String {
@@ -272,12 +259,6 @@ mod tests {
             extra_time: None,
             penalties: None,
         }
-    }
-
-    #[test]
-    fn matchresult_winner() {
-        let m = gen_test_result();
-        assert_eq!(m.winner(), super::MatchWinner::Draw);
     }
 
     #[test]
