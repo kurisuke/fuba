@@ -104,12 +104,16 @@ pub enum RankBy {
     Points,
     #[serde(rename = "goaldiff")]
     GoalDiff,
+    #[serde(rename = "goalquot")]
+    GoalQuot,
     #[serde(rename = "goals")]
     Goals,
     #[serde(rename = "vspoints")]
     VsPoints,
     #[serde(rename = "vsgoaldiff")]
     VsGoalDiff,
+    #[serde(rename = "vsgoalquot")]
+    VsGoalQuot,
     #[serde(rename = "vsgoals")]
     VsGoals,
     #[serde(rename = "awaygoals")]

@@ -22,6 +22,7 @@ use sim::MatchResult;
 use std::cell::RefCell;
 use std::cmp::Ordering;
 use std::collections::HashMap;
+use std::f64::EPSILON;
 use std::rc::Rc;
 
 pub struct RoundResult {
@@ -49,9 +50,28 @@ impl RoundStats {
         self.goals_for as i32 - self.goals_against as i32
     }
 
+    pub fn goal_quot(&self) -> f64 {
+        let div = if self.goals_against == 0 {
+            EPSILON
+        } else {
+            self.goals_against as f64
+        };
+        self.goals_for as f64 / div
+    }
+
     pub fn vs_goal_diff(&self, id: &str) -> i32 {
         *self.vs_goals_for.get(id).unwrap_or(&0) as i32
             - *self.vs_goals_against.get(id).unwrap_or(&0) as i32
+    }
+
+    pub fn vs_goal_quot(&self, id: &str) -> f64 {
+        let ga = *self.vs_goals_against.get(id).unwrap_or(&0);
+        let div = if ga == 0 {
+            EPSILON
+        } else {
+            self.goals_against as f64
+        };
+        *self.vs_goals_for.get(id).unwrap_or(&0) as f64 / div
     }
 }
 
@@ -589,6 +609,9 @@ impl RoundResult {
                         o = match r {
                             ::config::RankBy::Points => y.points.cmp(&x.points),
                             ::config::RankBy::GoalDiff => y.goal_diff().cmp(&x.goal_diff()),
+                            ::config::RankBy::GoalQuot => {
+                                y.goal_quot().partial_cmp(&x.goal_quot()).unwrap()
+                            }
                             ::config::RankBy::Goals => y.goals_for.cmp(&x.goals_for),
                             ::config::RankBy::VsPoints => y.vs_points
                                 .get(opponent_id.0)
@@ -596,6 +619,9 @@ impl RoundResult {
                                 .cmp(&x.vs_points.get(opponent_id.1).unwrap_or(&0)),
                             ::config::RankBy::VsGoalDiff => y.vs_goal_diff(opponent_id.0)
                                 .cmp(&x.vs_goal_diff(opponent_id.1)),
+                            ::config::RankBy::VsGoalQuot => y.vs_goal_quot(opponent_id.0)
+                                .partial_cmp(&x.vs_goal_quot(opponent_id.1))
+                                .unwrap(),
                             ::config::RankBy::VsGoals => y.vs_goals_for
                                 .get(opponent_id.0)
                                 .unwrap_or(&0)
