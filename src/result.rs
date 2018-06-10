@@ -91,6 +91,19 @@ impl PairingResult {
         }
         goals
     }
+
+    fn last_match_result(&self) -> &::sim::MatchResult {
+        self.match_results.last().unwrap().result.as_ref().unwrap()
+    }
+
+    fn last_match_result_mut(&mut self) -> &mut ::sim::MatchResult {
+        self.match_results
+            .last_mut()
+            .unwrap()
+            .result
+            .as_mut()
+            .unwrap()
+    }
 }
 
 pub struct Match {
@@ -370,20 +383,13 @@ impl RoundResult {
                 if pairing.winner == Some(MatchWinner::Draw) {
                     if let Some(_) = rank_by.iter().find(|&x| x == &::config::RankBy::Extra) {
                         {
-                            let mut last_match = pairing.match_results.last_mut().unwrap();
-                            let mut match_result = last_match.result.as_mut().unwrap();
-                            sim.add_extra(match_result, last_elos);
+                            let mut r = pairing.last_match_result_mut();
+                            sim.add_extra(r, last_elos);
                         }
 
                         pairing.winner = Some(get_winner(pairing.total_goals()));
                         if pairing.winner != Some(MatchWinner::Draw) {
-                            let r = pairing
-                                .match_results
-                                .last()
-                                .unwrap()
-                                .result
-                                .as_ref()
-                                .unwrap();
+                            let r = pairing.last_match_result();
                             cur_elos =
                                 ::sim::calculate_elo(last_elos, r.total_after_extra(), weight);
                         }
@@ -400,13 +406,7 @@ impl RoundResult {
                         pairing.winner = Some(get_winner(pairing.total_goals()));
 
                         // Update ELOs
-                        let r = pairing
-                            .match_results
-                            .last()
-                            .unwrap()
-                            .result
-                            .as_ref()
-                            .unwrap();
+                        let r = pairing.last_match_result();
                         last_elos = cur_elos;
                         cur_elos = ::sim::calculate_elo(cur_elos, r.total_after_extra(), weight);
                     }
@@ -415,20 +415,13 @@ impl RoundResult {
                     if pairing.winner == Some(MatchWinner::Draw) {
                         if let Some(_) = rank_by.iter().find(|&x| x == &::config::RankBy::Extra) {
                             {
-                                let mut last_match = pairing.match_results.last_mut().unwrap();
-                                let mut match_result = last_match.result.as_mut().unwrap();
-                                sim.add_extra(match_result, last_elos);
+                                let mut r = pairing.last_match_result_mut();
+                                sim.add_extra(r, last_elos);
                             }
 
                             pairing.winner = Some(get_winner(pairing.total_goals()));
                             if pairing.winner != Some(MatchWinner::Draw) {
-                                let r = pairing
-                                    .match_results
-                                    .last()
-                                    .unwrap()
-                                    .result
-                                    .as_ref()
-                                    .unwrap();
+                                let r = pairing.last_match_result();
                                 cur_elos =
                                     ::sim::calculate_elo(last_elos, r.total_after_extra(), weight);
                             }
@@ -440,20 +433,13 @@ impl RoundResult {
                 if pairing.winner == Some(MatchWinner::Draw) {
                     if let Some(_) = rank_by.iter().find(|&x| x == &::config::RankBy::Penalties) {
                         {
-                            let mut last_match = pairing.match_results.last_mut().unwrap();
-                            let mut match_result = last_match.result.as_mut().unwrap();
-                            sim.add_penalties(match_result);
+                            let mut r = pairing.last_match_result_mut();
+                            sim.add_penalties(r);
                         }
 
                         pairing.winner = Some(get_winner(pairing.total_goals()));
                         if pairing.winner != Some(MatchWinner::Draw) {
-                            let r = pairing
-                                .match_results
-                                .last()
-                                .unwrap()
-                                .result
-                                .as_ref()
-                                .unwrap();
+                            let r = pairing.last_match_result();
                             cur_elos =
                                 ::sim::calculate_elo(last_elos, r.total_after_extra(), weight);
                         }
@@ -474,19 +460,37 @@ impl RoundResult {
                             pairing.winner = Some(get_winner(pairing.total_goals()));
 
                             // Update ELOs
-                            let r = pairing
-                                .match_results
-                                .last()
-                                .unwrap()
-                                .result
-                                .as_ref()
-                                .unwrap();
-                            cur_elos =
-                                ::sim::calculate_elo(cur_elos, r.total_after_extra(), weight);
+                            {
+                                let r = pairing.last_match_result();
+                                last_elos = cur_elos;
+                                cur_elos =
+                                    ::sim::calculate_elo(cur_elos, r.total_after_extra(), weight);
+                            }
 
                             if pairing.winner != Some(MatchWinner::Draw) {
                                 break;
-                            };
+                            } else {
+                                // extra time
+                                if let Some(_) =
+                                    rank_by.iter().find(|&x| x == &::config::RankBy::Extra)
+                                {
+                                    {
+                                        let mut r = pairing.last_match_result_mut();
+                                        sim.add_extra(r, last_elos);
+                                    }
+
+                                    pairing.winner = Some(get_winner(pairing.total_goals()));
+                                    if pairing.winner != Some(MatchWinner::Draw) {
+                                        let r = pairing.last_match_result();
+                                        cur_elos = ::sim::calculate_elo(
+                                            last_elos,
+                                            r.total_after_extra(),
+                                            weight,
+                                        );
+                                        break;
+                                    }
+                                }
+                            }
                         }
                     }
                 }
