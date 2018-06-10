@@ -1,0 +1,154 @@
+name = "1970 FIFA World Cup"
+seed = "12345678"
+
+root = "rank"
+
+team = [
+    { id = "mex", name = "Mexico", elo = 1796 },
+    { id = "urs", name = "Soviet Union", elo = 1977 },
+    { id = "slv", name = "El Salvador", elo = 1535 },
+    { id = "bel", name = "Belgium", elo = 1772 },
+
+    { id = "uru", name = "Uruguay", elo = 1848 },
+    { id = "isr", name = "Israel", elo = 1671 },
+    { id = "ita", name = "Italy", elo = 2005 },
+    { id = "swe", name = "Sweden", elo = 1842 },
+
+    { id = "rou", name = "Romania", elo = 1793 },
+    { id = "eng", name = "England", elo = 2067 },
+    { id = "tch", name = "Czechoslovakia", elo = 1959 },
+    { id = "bra", name = "Brazil", elo = 2012 },
+
+    { id = "per", name = "Peru", elo = 1711 },
+    { id = "bul", name = "Bulgaria", elo = 1810 },
+    { id = "mar", name = "Morocco", elo = 1687 },
+    { id = "frg", name = "West Germany", elo = 1991 },
+]
+
+[[format]]
+id = "f_group"
+mode = "roundrobin"
+order = [[1,2], [3,4],
+         [1,3], [2,4],
+         [1,4], [2,3]]
+neutral = true
+points_for_win = 2
+rank_by = ["points", "goaldiff", "goals", "vspoints", "vsgoaldiff", "vsgoals"]
+
+[[format]]
+id = "f_playoff"
+mode = "playoff"
+random = false
+neutral = true
+rank_by = ["extra"]
+
+[[format]]
+id = "f_final"
+mode = "playoff"
+random = false
+neutral = true
+rank_by = ["extra", "replayalways"]
+
+[[format]]
+id = "f_ranking"
+mode = "ranking"
+rank_by = []
+
+[[round]]
+id = "group-1"
+name = "Group 1"
+format = "f_group"
+entrant = [
+    { id = "mex" },
+    { id = "urs" },
+    { id = "slv" },
+    { id = "bel" },
+]
+
+[[round]]
+id = "group-2"
+name = "Group 2"
+format = "f_group"
+entrant = [
+    { id = "uru" },
+    { id = "isr" },
+    { id = "ita" },
+    { id = "swe" },
+]
+
+[[round]]
+id = "group-3"
+name = "Group 3"
+format = "f_group"
+entrant = [
+    { id = "rou" },
+    { id = "eng" },
+    { id = "tch" },
+    { id = "bra" },
+]
+
+[[round]]
+id = "group-4"
+name = "Group 4"
+format = "f_group"
+entrant = [
+    { id = "per" },
+    { id = "bul" },
+    { id = "mar" },
+    { id = "frg" },
+]
+
+[[round]]
+id = "qf"
+name = "Quarterfinals"
+format = "f_playoff"
+entrant = [
+    { prev = "group-1", pos = 1 },
+    { prev = "group-2", pos = 2 },
+    { prev = "group-2", pos = 1 },
+    { prev = "group-1", pos = 2 },
+    { prev = "group-3", pos = 1 },
+    { prev = "group-4", pos = 2 },
+    { prev = "group-4", pos = 1 },
+    { prev = "group-3", pos = 2 },
+]
+
+[[round]]
+id = "sf"
+name = "Semifinals"
+format = "f_playoff"
+entrant = [
+    { prev = "qf", pos = 1 },
+    { prev = "qf", pos = 3 },
+    { prev = "qf", pos = 2 },
+    { prev = "qf", pos = 4 },
+]
+
+[[round]]
+id = "3p"
+name = "Third place play-off"
+format = "f_playoff"
+entrant = [
+    { prev = "sf", pos = 3 },
+    { prev = "sf", pos = 4 },
+]
+
+[[round]]
+id = "fi"
+name = "Final"
+format = "f_final"
+entrant = [
+    { prev = "sf", pos = 1 },
+    { prev = "sf", pos = 2 },
+]
+
+[[round]]
+id = "rank"
+name = "Final ranking"
+format = "f_ranking"
+entrant = [
+    { prev = "fi", pos = 1 },
+    { prev = "fi", pos = 2 },
+    { prev = "3p", pos = 1 },
+    { prev = "3p", pos = 2 },
+]
