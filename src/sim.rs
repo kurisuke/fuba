@@ -63,8 +63,14 @@ impl MatchResult {
         total
     }
 
-    pub fn draw(&self) -> bool {
-        self.total().0 == self.total().1
+    pub fn winner(&self) -> ::common::MatchWinner {
+        if self.total().0 > self.total().1 {
+            ::common::MatchWinner::WinTeam1
+        } else if self.total().0 < self.total().1 {
+            ::common::MatchWinner::WinTeam2
+        } else {
+            ::common::MatchWinner::Draw
+        }
     }
 
     pub fn result_str(&self) -> String {

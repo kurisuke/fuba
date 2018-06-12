@@ -35,6 +35,7 @@ pub enum CmdlineConfig {
         elo: (u32, u32),
         extra: bool,
         penalties: bool,
+        iter: u32,
     },
     None,
 }
@@ -108,6 +109,14 @@ pub fn get_config() -> CmdlineConfig {
                         .short("p")
                         .long("penalties")
                         .help("Run penalty shootout when needed"),
+                )
+                .arg(
+                    clap::Arg::with_name("iter")
+                        .short("i")
+                        .long("iter")
+                        .value_name("N")
+                        .help("Number of iterations")
+                        .takes_value(true),
                 ),
         );
 
@@ -147,10 +156,15 @@ pub fn get_config() -> CmdlineConfig {
             let elo2: u32 = sub_m.value_of("elo2").unwrap().parse().unwrap();
             let extra = sub_m.is_present("extra");
             let penalties = sub_m.is_present("penalties");
+            let iter: u32 = match sub_m.value_of("iter") {
+                Some(x) => x.parse().unwrap_or(1),
+                None => 1,
+            };
             CmdlineConfig::Match {
                 elo: (elo1, elo2),
                 extra,
                 penalties,
+                iter,
             }
         }
         (_, _) => {
