@@ -80,13 +80,14 @@ fn main() {
             config_file,
             iter,
             num_threads,
+            match_rounds,
         } => {
             check_config_file(&config_file);
             println!(
                 "Launch monte carlo simulation mode, {} iterations, {} threads",
                 iter, num_threads
             );
-            ::multirun::multirun(config_file, iter, num_threads);
+            ::multirun::multirun(config_file, iter, num_threads, match_rounds);
         }
         ::cmdline::CmdlineConfig::None => {
             std::process::exit(1);

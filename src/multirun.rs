@@ -34,7 +34,7 @@ struct RoundResultForStats {
     pub participants: Vec<String>,
 }
 
-pub fn multirun(config_file: String, n: u32, num_threads: u32) {
+pub fn multirun(config_file: String, n: u32, num_threads: u32, match_rounds: Vec<String>) {
     // test if config file parses
     ::config::read_config(&config_file).unwrap_or_else(|x| {
         eprintln!("{}", x);
@@ -105,16 +105,24 @@ pub fn multirun(config_file: String, n: u32, num_threads: u32) {
     }
 
     for (k, v) in round_stats {
-        println!("Stats for round: {}\n", k);
-
-        println!("Winners:");
-        print_histo(&v.winner, n);
-        println!();
-
-        println!("Participants:");
-        print_histo(&v.participant, n);
-        println!();
+        if match_rounds.is_empty() {
+            print_round_result(&k, &v, n);
+        } else if let Some(_) = match_rounds.iter().find(|&x| x == &k) {
+            print_round_result(&k, &v, n);
+        }
     }
+}
+
+fn print_round_result(name: &str, r: &Stats, n: u32) {
+    println!("Stats for round: {}\n", name);
+
+    println!("Winners:");
+    print_histo(&r.winner, n);
+    println!();
+
+    println!("Participants:");
+    print_histo(&r.participant, n);
+    println!();
 }
 
 fn print_histo(m: &HashMap<String, u32>, n: u32) {

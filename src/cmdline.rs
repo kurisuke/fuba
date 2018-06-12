@@ -25,6 +25,7 @@ pub enum CmdlineConfig {
         config_file: String,
         iter: u32,
         num_threads: u32,
+        match_rounds: Vec<String>,
     },
     File {
         config_file: String,
@@ -61,6 +62,14 @@ pub fn get_config() -> CmdlineConfig {
                         .value_name("N")
                         .help("Number of threads to use")
                         .takes_value(true),
+                )
+                .arg(
+                    clap::Arg::with_name("match-rounds")
+                        .short("r")
+                        .long("match-rounds")
+                        .value_name("MATCH")
+                        .help("Match round IDs for display, comma separated")
+                        .takes_value(true),
                 ),
         )
         .subcommand(
@@ -91,10 +100,15 @@ pub fn get_config() -> CmdlineConfig {
                 Some(x) => x.parse().unwrap_or(::num_cpus::get() as u32),
                 None => ::num_cpus::get() as u32,
             };
+            let match_rounds = match sub_m.value_of("match-rounds") {
+                Some(x) => x.split(",").map(|x| String::from(x)).collect(),
+                None => vec![],
+            };
             CmdlineConfig::Sim {
                 config_file: String::from(config_file),
                 iter,
                 num_threads,
+                match_rounds,
             }
         }
         ("file", Some(sub_m)) => {
