@@ -89,6 +89,24 @@ fn main() {
             );
             ::multirun::multirun(config_file, iter, num_threads, match_rounds);
         }
+        ::cmdline::CmdlineConfig::Match {
+            elo,
+            extra,
+            penalties,
+        } => {
+            let mut rng = XorShiftRng::from_entropy();
+            let mut sim = sim::Sim::new(&mut rng);
+
+            let mut m = sim.simulate(elo);
+            if extra && m.draw() {
+                sim.add_extra(&mut m, elo);
+            }
+            if penalties && m.draw() {
+                sim.add_penalties(&mut m);
+            }
+
+            println!("Result: {}", m.result_str());
+        }
         ::cmdline::CmdlineConfig::None => {
             std::process::exit(1);
         }

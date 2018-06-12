@@ -63,6 +63,10 @@ impl MatchResult {
         total
     }
 
+    pub fn draw(&self) -> bool {
+        self.total().0 == self.total().1
+    }
+
     pub fn result_str(&self) -> String {
         let mut s = String::new();
         s += &format!("{}-{}", self.total().0, self.total().1);

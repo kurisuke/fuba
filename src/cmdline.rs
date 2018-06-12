@@ -31,6 +31,11 @@ pub enum CmdlineConfig {
         config_file: String,
         ignore_seed: bool,
     },
+    Match {
+        elo: (u32, u32),
+        extra: bool,
+        penalties: bool,
+    },
     None,
 }
 
@@ -86,6 +91,24 @@ pub fn get_config() -> CmdlineConfig {
                         .long("ignore-seed")
                         .help("Ignore seed from configuration file"),
                 ),
+        )
+        .subcommand(
+            clap::SubCommand::with_name("match")
+                .about("Run single match")
+                .arg(clap::Arg::with_name("elo1").help("ELO of team 1").index(1))
+                .arg(clap::Arg::with_name("elo2").help("ELO of team 2").index(2))
+                .arg(
+                    clap::Arg::with_name("extra")
+                        .short("e")
+                        .long("extra")
+                        .help("Run extra time when needed"),
+                )
+                .arg(
+                    clap::Arg::with_name("penalties")
+                        .short("p")
+                        .long("penalties")
+                        .help("Run penalty shootout when needed"),
+                ),
         );
 
     let m = a.get_matches();
@@ -119,8 +142,19 @@ pub fn get_config() -> CmdlineConfig {
                 ignore_seed,
             }
         }
+        ("match", Some(sub_m)) => {
+            let elo1: u32 = sub_m.value_of("elo1").unwrap().parse().unwrap();
+            let elo2: u32 = sub_m.value_of("elo2").unwrap().parse().unwrap();
+            let extra = sub_m.is_present("extra");
+            let penalties = sub_m.is_present("penalties");
+            CmdlineConfig::Match {
+                elo: (elo1, elo2),
+                extra,
+                penalties,
+            }
+        }
         (_, _) => {
-            eprintln!("Specify subcommand: file, sim");
+            eprintln!("Specify subcommand: file, match, sim");
             CmdlineConfig::None
         }
     }
