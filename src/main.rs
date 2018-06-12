@@ -25,6 +25,7 @@ extern crate rand;
 extern crate serde_derive;
 extern crate toml;
 
+mod cmdline;
 mod common;
 mod config;
 mod flagcheck;
@@ -46,35 +47,21 @@ fn convert_to_seed(s: &String) -> [u8; 16] {
 }
 
 fn main() {
-    let a = clap::App::new("fuba")
-        .version(crate_version!())
-        .author(crate_authors!())
-        .about("Simulate football (soccer) matches and tournaments")
-        .args_from_usage(
-            "-s, --simulate=[N]    'Simulate N runs and print statistics'
-             -n, --num-threads=[N] 'Number of Threads (for simulation mode)'
-             -i, --ignore-seed     'Ignore random seed (for tournament mode)'
-             <CONFIG>           'Configuration file (toml)'",
-        )
-        .get_matches();
+    let cmdline_cfg = ::cmdline::get_config();
 
-    let config_file = a.value_of("CONFIG").unwrap();
-
-    match a.value_of("simulate") {
-        Some(n_str) => {
-            let n: u32 = n_str.parse().unwrap();
-            let num_threads: u32 = match a.value_of("num-threads") {
-                Some(x) => x.parse().unwrap_or(1),
-                None => num_cpus::get() as u32,
-            };
-            println!("Launch multirun mode, {} runs, {} threads", n, num_threads);
-            ::multirun::multirun(String::from(config_file), n, num_threads);
-        }
-        None => {
-            let config = config::read_config(&config_file).unwrap();
+    match cmdline_cfg {
+        ::cmdline::CmdlineConfig::File {
+            config_file,
+            ignore_seed,
+        } => {
+            check_config_file(&config_file);
+            let config = config::read_config(&config_file).unwrap_or_else(|x| {
+                eprintln!("{}", x);
+                std::process::exit(1);
+            });
 
             let mut rng = if let Some(ref x) = config.seed {
-                if a.is_present("ignore-seed") {
+                if ignore_seed {
                     XorShiftRng::from_entropy()
                 } else {
                     XorShiftRng::from_seed(convert_to_seed(x))
@@ -89,5 +76,32 @@ fn main() {
                 r.print();
             }
         }
+        ::cmdline::CmdlineConfig::Sim {
+            config_file,
+            iter,
+            num_threads,
+        } => {
+            check_config_file(&config_file);
+            println!(
+                "Launch monte carlo simulation mode, {} iterations, {} threads",
+                iter, num_threads
+            );
+            ::multirun::multirun(config_file, iter, num_threads);
+        }
+        ::cmdline::CmdlineConfig::None => {
+            std::process::exit(1);
+        }
+    };
+}
+
+fn check_config_file(config_file: &str) {
+    if config_file.is_empty() {
+        eprintln!("Configuration file name required!");
+        std::process::exit(1);
+    }
+
+    if !std::path::Path::new(config_file).exists() {
+        eprintln!("File does not exist: {}", config_file);
+        std::process::exit(1);
     }
 }

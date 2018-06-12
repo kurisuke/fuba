@@ -19,6 +19,7 @@
 use rand::prng::XorShiftRng;
 use rand::FromEntropy;
 use std::collections::HashMap;
+use std::process;
 use std::sync::mpsc;
 use std::thread;
 
@@ -34,6 +35,12 @@ struct RoundResultForStats {
 }
 
 pub fn multirun(config_file: String, n: u32, num_threads: u32) {
+    // test if config file parses
+    ::config::read_config(&config_file).unwrap_or_else(|x| {
+        eprintln!("{}", x);
+        process::exit(1);
+    });
+
     let mut round_stats = HashMap::<String, Stats>::new();
 
     let (tx, rx) = mpsc::channel();
