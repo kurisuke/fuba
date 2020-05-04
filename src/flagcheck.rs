@@ -33,7 +33,7 @@ impl FlagCheck {
         }
     }
 
-    pub fn check(&self, flags: &Vec<String>) -> Result<bool, String> {
+    pub fn check(&self, flags: &[String]) -> Result<bool, String> {
         self.node.check(flags)
     }
 
@@ -67,10 +67,11 @@ impl ParseNode {
         }
     }
 
-    fn check(&self, flags: &Vec<String>) -> Result<bool, String> {
+    fn check(&self, flags: &[String]) -> Result<bool, String> {
         match self.entry {
             GrammarItem::Paren => self.children.get(0).unwrap().check(flags),
-            GrammarItem::Not => self.children
+            GrammarItem::Not => self
+                .children
                 .get(0)
                 .unwrap()
                 .check(flags)
@@ -131,28 +132,32 @@ impl ParseNode {
                     .pretty_print()
             ),
             GrammarItem::Or => {
-                let lhs = self.children
+                let lhs = self
+                    .children
                     .get(0)
                     .expect("OR needs two children")
                     .pretty_print();
-                let rhs = self.children
+                let rhs = self
+                    .children
                     .get(1)
                     .expect("OR needs two children")
                     .pretty_print();
                 format!("{} & {}", lhs, rhs)
             }
             GrammarItem::And => {
-                let lhs = self.children
+                let lhs = self
+                    .children
                     .get(0)
                     .expect("AND needs two children")
                     .pretty_print();
-                let rhs = self.children
+                let rhs = self
+                    .children
                     .get(1)
                     .expect("AND needs two children")
                     .pretty_print();
                 format!("{} & {}", lhs, rhs)
             }
-            GrammarItem::Flag(ref f) => format!("{}", f),
+            GrammarItem::Flag(ref f) => f.to_string(),
         }
     }
 }
@@ -171,7 +176,7 @@ fn lex(input: &str) -> Result<Vec<LexItem>, String> {
     let mut it = input.chars().peekable();
     while let Some(&c) = it.peek() {
         match c {
-            'a'...'z' | 'A'...'Z' | '0'...'9' => {
+            'a'..='z' | 'A'..='Z' | '0'..='9' => {
                 it.next();
                 let f = get_flag(c, &mut it);
                 result.push(LexItem::Flag(f));
@@ -201,7 +206,7 @@ fn lex(input: &str) -> Result<Vec<LexItem>, String> {
 }
 
 fn get_flag<T: Iterator<Item = char>>(c: char, it: &mut Peekable<T>) -> String {
-    let mut flag = c.to_string().clone();
+    let mut flag = c.to_string();
 
     while let Some(&c) = it.peek() {
         if c.is_alphanumeric() {
@@ -229,7 +234,7 @@ fn parse(input: &str) -> Result<ParseNode, String> {
     })
 }
 
-fn parse_expr(tokens: &Vec<LexItem>, pos: usize) -> Result<(ParseNode, usize), String> {
+fn parse_expr(tokens: &[LexItem], pos: usize) -> Result<(ParseNode, usize), String> {
     let (lhs, next_pos) = parse_or_operand(tokens, pos)?;
     let c = tokens.get(next_pos);
     match c {
@@ -244,7 +249,7 @@ fn parse_expr(tokens: &Vec<LexItem>, pos: usize) -> Result<(ParseNode, usize), S
     }
 }
 
-fn parse_or_operand(tokens: &Vec<LexItem>, pos: usize) -> Result<(ParseNode, usize), String> {
+fn parse_or_operand(tokens: &[LexItem], pos: usize) -> Result<(ParseNode, usize), String> {
     let (lhs, next_pos) = parse_and_operand(tokens, pos)?;
     let c = tokens.get(next_pos);
     match c {
@@ -259,23 +264,23 @@ fn parse_or_operand(tokens: &Vec<LexItem>, pos: usize) -> Result<(ParseNode, usi
     }
 }
 
-fn parse_and_operand(tokens: &Vec<LexItem>, pos: usize) -> Result<(ParseNode, usize), String> {
-    let c: &LexItem = tokens.get(pos).ok_or(String::from(
-        "Unexpected end of input, expected paren or number",
-    ))?;
+fn parse_and_operand(tokens: &[LexItem], pos: usize) -> Result<(ParseNode, usize), String> {
+    let c: &LexItem = tokens
+        .get(pos)
+        .ok_or_else(|| String::from("Unexpected end of input, expected paren or number"))?;
 
-    match c {
-        &LexItem::Op('!') => {
+    match *c {
+        LexItem::Op('!') => {
             let mut not_node = ParseNode::new(GrammarItem::Not);
             let (operand, next_pos) = parse_expr(tokens, pos + 1)?;
             not_node.children.push(operand);
             Ok((not_node, next_pos))
         }
-        &LexItem::Flag(ref f) => {
-            let mut node = ParseNode::new(GrammarItem::Flag(f.clone()));
+        LexItem::Flag(ref f) => {
+            let node = ParseNode::new(GrammarItem::Flag(f.clone()));
             Ok((node, pos + 1))
         }
-        &LexItem::ParenOpen => parse_expr(tokens, pos + 1).and_then(|(node, next_pos)| {
+        LexItem::ParenOpen => parse_expr(tokens, pos + 1).and_then(|(node, next_pos)| {
             if let Some(&LexItem::ParenClose) = tokens.get(next_pos) {
                 let mut paren = ParseNode::new(GrammarItem::Paren);
                 paren.children.push(node);

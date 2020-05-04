@@ -133,7 +133,7 @@ pub fn get_config() -> CmdlineConfig {
                 None => ::num_cpus::get() as u32,
             };
             let match_rounds = match sub_m.value_of("match-rounds") {
-                Some(x) => x.split(",").map(|x| String::from(x)).collect(),
+                Some(x) => x.split(',').map(String::from).collect(),
                 None => vec![],
             };
             CmdlineConfig::Sim {

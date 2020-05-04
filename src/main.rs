@@ -21,6 +21,7 @@ extern crate clap;
 extern crate num_cpus;
 extern crate petgraph;
 extern crate rand;
+extern crate rand_distr;
 #[macro_use]
 extern crate serde_derive;
 extern crate toml;
@@ -34,15 +35,15 @@ mod multirun;
 mod result;
 mod sim;
 
-use rand::prng::XorShiftRng;
-use rand::{FromEntropy, SeedableRng};
+use rand::rngs::StdRng;
+use rand::SeedableRng;
 use std::collections::HashMap;
 
-fn convert_to_seed(s: &String) -> [u8; 16] {
+fn convert_to_seed(s: &str) -> [u8; 32] {
     let mut v: Vec<u8> = s.bytes().collect();
-    v.resize(16, 0);
+    v.resize(32, 0);
 
-    let mut seed: [u8; 16] = Default::default();
+    let mut seed: [u8; 32] = Default::default();
     seed.copy_from_slice(&v[..]);
     seed
 }
@@ -63,12 +64,12 @@ fn main() {
 
             let mut rng = if let Some(ref x) = config.seed {
                 if ignore_seed {
-                    XorShiftRng::from_entropy()
+                    StdRng::from_entropy()
                 } else {
-                    XorShiftRng::from_seed(convert_to_seed(x))
+                    StdRng::from_seed(convert_to_seed(x))
                 }
             } else {
-                XorShiftRng::from_entropy()
+                StdRng::from_entropy()
             };
             let mut sim = sim::Sim::new(&mut rng);
 
@@ -96,7 +97,7 @@ fn main() {
             penalties,
             iter,
         } => {
-            let mut rng = XorShiftRng::from_entropy();
+            let mut rng = StdRng::from_entropy();
             let mut sim = sim::Sim::new(&mut rng);
 
             if iter == 1 {
@@ -167,7 +168,7 @@ fn run_single_match_iter(
         goals.1 += m.total_after_extra().1;
 
         let result_str = m.result_str();
-        let result_key = result_str.split_terminator(" ").next().unwrap();
+        let result_key = result_str.split_terminator(' ').next().unwrap();
         let rc = result_map.entry(String::from(result_key)).or_insert(0);
         *rc += 1;
     }
@@ -187,11 +188,7 @@ fn run_single_match_iter(
 
     println!("\n Most probable results: ");
     let max_el = std::cmp::min(5, results_v.len());
-    for i in 0..max_el {
-        println!(
-            "{} {}",
-            results_v[i].0,
-            *results_v[i].1 as f64 / iter as f64
-        );
+    for item in results_v.iter().take(max_el) {
+        println!("{} {}", item.0, *item.1 as f64 / iter as f64);
     }
 }

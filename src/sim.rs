@@ -16,9 +16,10 @@
  *
  */
 
-use rand::distributions::{Distribution, Poisson, Uniform};
-use rand::prng::XorShiftRng;
+use rand::rngs::StdRng;
 use rand::Rng;
+use rand_distr::{Distribution, Poisson, Uniform};
+use std::cmp::Ordering;
 use std::string::String;
 
 pub struct MatchResult {
@@ -64,12 +65,10 @@ impl MatchResult {
     }
 
     pub fn winner(&self) -> ::common::MatchWinner {
-        if self.total().0 > self.total().1 {
-            ::common::MatchWinner::WinTeam1
-        } else if self.total().0 < self.total().1 {
-            ::common::MatchWinner::WinTeam2
-        } else {
-            ::common::MatchWinner::Draw
+        match self.total().0.cmp(&self.total().1) {
+            Ordering::Greater => ::common::MatchWinner::WinTeam1,
+            Ordering::Less => ::common::MatchWinner::WinTeam2,
+            Ordering::Equal => ::common::MatchWinner::Draw,
         }
     }
 
@@ -93,13 +92,13 @@ impl MatchResult {
             self.total_after_extra().1
         );
 
-        if let Some(_) = self.penalties {
-            if let Some(_) = self.extra_time {
+        if self.penalties.is_some() {
+            if self.extra_time.is_some() {
                 s += &format!("p ({}, {}, {})", goals_first, goals_second, goals_extra);
             } else {
                 s += &format!("p ({}, {})", goals_first, goals_second);
             }
-        } else if let Some(_) = self.extra_time {
+        } else if self.extra_time.is_some() {
             s += &format!("e ({}, {})", goals_first, goals_second);
         } else {
             s += &format!(" ({})", goals_first);
@@ -109,12 +108,12 @@ impl MatchResult {
 }
 
 pub struct Sim<'a> {
-    rng: &'a mut XorShiftRng,
+    rng: &'a mut StdRng,
 }
 
 impl<'a> Sim<'a> {
-    pub fn new(rng: &mut XorShiftRng) -> Sim {
-        Sim { rng: rng }
+    pub fn new(rng: &mut StdRng) -> Sim {
+        Sim { rng }
     }
 
     pub fn simulate(&mut self, elo: (u32, u32)) -> MatchResult {
@@ -148,9 +147,10 @@ impl<'a> Sim<'a> {
         let p_team = expected_result(d_elo);
         let r_team = Uniform::new(0f64, 1.);
 
-        let poi = Poisson::new(avg_goal);
+        let poi = Poisson::new(avg_goal).unwrap();
+        let total_goals = poi.sample(&mut self.rng);
 
-        for _ in 1..(poi.sample(&mut self.rng) + 1) {
+        for _ in 0..total_goals {
             if r_team.sample(self.rng) <= p_team {
                 goals.0.push(r_minute.sample(self.rng));
             } else {
@@ -218,17 +218,15 @@ impl<'a> Sim<'a> {
 
 pub fn calculate_elo(old_elo: (u32, u32), total: (u32, u32), k: f64) -> (u32, u32) {
     let g = match (total.0 as i32 - total.1 as i32).abs() {
-        0...1 => 1.,
+        0..=1 => 1.,
         2 => 1.5,
         n => (11. + (n as f64)) / 8.,
     };
 
-    let w = if total.0 > total.1 {
-        1.
-    } else if total.0 < total.1 {
-        0.
-    } else {
-        0.5
+    let w = match total.0.cmp(&total.1) {
+        Ordering::Greater => 1.,
+        Ordering::Less => 0.,
+        Ordering::Equal => 0.5,
     };
 
     let d_elo = (old_elo.0 as i32 - old_elo.1 as i32) as f64;

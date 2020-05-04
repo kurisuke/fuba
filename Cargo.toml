@@ -5,10 +5,11 @@ authors = ["Peter Helbing <peter@abulafia.org>"]
 license = "GPL-2.0-or-later"
 
 [dependencies]
-clap = "2.31"
-num_cpus = "1.0"
-petgraph = "0.4"
-rand = "0.5"
+clap = "2.33"
+num_cpus = "1.13"
+petgraph = "0.5"
+rand = "0.7"
+rand_distr = "0.2"
 serde = "1.0"
 serde_derive = "1.0"
-toml = "0.4"
+toml = "0.5"

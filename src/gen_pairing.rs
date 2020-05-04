@@ -17,7 +17,7 @@
  */
 
 use rand;
-use rand::Rng;
+use rand::seq::SliceRandom;
 
 pub fn generate_round_robin(num_teams: u32, num_legs: u32, randomize: bool) -> Vec<Vec<u32>> {
     let dummy_team = if num_teams % 2 != 0 { num_teams + 1 } else { 0 };
@@ -84,7 +84,7 @@ pub fn generate_round_robin(num_teams: u32, num_legs: u32, randomize: bool) -> V
             (0..number_of_rounds as usize * num_legs as usize).collect();
         {
             let slice: &mut [usize] = &mut shuffled_idx;
-            rng.shuffle(slice);
+            slice.shuffle(&mut rng);
         }
 
         let mut shuffled_pairings = vec![];

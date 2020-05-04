@@ -16,8 +16,8 @@
  *
  */
 
-use rand::prng::XorShiftRng;
-use rand::FromEntropy;
+use rand::rngs::StdRng;
+use rand::SeedableRng;
 use std::collections::HashMap;
 use std::process;
 use std::sync::mpsc;
@@ -51,7 +51,7 @@ pub fn multirun(config_file: String, n: u32, num_threads: u32, match_rounds: Vec
         let local_tx = mpsc::Sender::clone(&tx);
         let local_config_file = config_file.clone();
         thread_handles.push(thread::spawn(move || {
-            let mut rng = XorShiftRng::from_entropy();
+            let mut rng = StdRng::from_entropy();
             let mut sim = ::sim::Sim::new(&mut rng);
 
             let config = ::config::read_config(&local_config_file).unwrap();
@@ -65,7 +65,8 @@ pub fn multirun(config_file: String, n: u32, num_threads: u32, match_rounds: Vec
                     .map(|r| RoundResultForStats {
                         name: r.name.clone(),
                         winner: r.stats[0].team.borrow().name.clone(),
-                        participants: r.stats
+                        participants: r
+                            .stats
                             .iter()
                             .map(|x| x.team.borrow().name.clone())
                             .collect(),
@@ -105,9 +106,7 @@ pub fn multirun(config_file: String, n: u32, num_threads: u32, match_rounds: Vec
     }
 
     for (k, v) in round_stats {
-        if match_rounds.is_empty() {
-            print_round_result(&k, &v, n);
-        } else if let Some(_) = match_rounds.iter().find(|&x| x == &k) {
+        if match_rounds.is_empty() || match_rounds.iter().any(|x| x == &k) {
             print_round_result(&k, &v, n);
         }
     }

@@ -67,23 +67,23 @@ pub struct Format {
 }
 
 fn def_false() -> bool {
-    return false;
+    false
 }
 
 fn def_legs() -> u32 {
-    return 1;
+    1
 }
 
 fn def_weight() -> f64 {
-    return 60.;
+    60.
 }
 
 fn def_points_for_win() -> u32 {
-    return 3;
+    3
 }
 
 fn def_points_for_draw() -> u32 {
-    return 1;
+    1
 }
 
 #[derive(Deserialize, Clone, PartialEq)]
@@ -161,11 +161,13 @@ pub enum Cond {
 
 impl Clone for Config {
     fn clone(&self) -> Config {
-        let team: Vec<Rc<RefCell<Team>>> = self.team
+        let team: Vec<Rc<RefCell<Team>>> = self
+            .team
             .iter()
             .map(|x| Rc::new(RefCell::new(x.borrow().clone())))
             .collect();
-        let format: Vec<Rc<RefCell<Format>>> = self.format
+        let format: Vec<Rc<RefCell<Format>>> = self
+            .format
             .iter()
             .map(|x| Rc::new(RefCell::new(x.borrow().clone())))
             .collect();
@@ -319,18 +321,16 @@ pub fn read_config(filename: &str) -> Result<Config, &str> {
                 .unwrap()
                 .clone();
 
-            return Ok(Config {
+            Ok(Config {
                 name: config.name,
                 seed: config.seed,
                 root,
                 team,
                 format,
                 round: round.into_inner(),
-            });
+            })
         }
-        Err(x) => {
-            return Err(x);
-        }
+        Err(x) => Err(x),
     }
 }
 
@@ -419,7 +419,7 @@ fn verify<'a>(config: &ConfigPars) -> Result<Vec<String>, &'a str> {
         .collect::<Vec<_>>())
 }
 
-fn verify_uniq(ids: &Vec<String>) -> Result<Vec<String>, String> {
+fn verify_uniq(ids: &[String]) -> Result<Vec<String>, String> {
     let mut uniq = HashMap::new();
     for id in ids.iter() {
         let id = id.clone();
@@ -430,14 +430,14 @@ fn verify_uniq(ids: &Vec<String>) -> Result<Vec<String>, String> {
             }
         }
     }
-    Ok(uniq.keys().map(|k| k.clone()).collect())
+    Ok(uniq.keys().cloned().collect())
 }
 
 fn convert_round(
     round_p: &RoundPars,
-    ex_teams: &Vec<Rc<RefCell<Team>>>,
-    ex_formats: &Vec<Rc<RefCell<Format>>>,
-    ex_rounds: &Vec<Rc<RefCell<Round>>>,
+    ex_teams: &[Rc<RefCell<Team>>],
+    ex_formats: &[Rc<RefCell<Format>>],
+    ex_rounds: &[Rc<RefCell<Round>>],
 ) -> Rc<RefCell<Round>> {
     let mut entrant = vec![];
     for e in round_p.entrant.iter() {
